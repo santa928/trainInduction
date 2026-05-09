@@ -10,17 +10,52 @@ type Mutable<T> = T extends readonly (infer Item)[]
     ? { -readonly [Key in keyof T]: Mutable<T[Key]> }
     : T;
 
+const cloneCourses = (): Mutable<typeof courses> =>
+  structuredClone(courses) as Mutable<typeof courses>;
+
 describe("validateCourses", () => {
   it("accepts the authored 15-course set", () => {
     expect(validateCourses(trains, courses)).toEqual([]);
   });
 
   it("rejects gaps that reference missing pieces", () => {
-    const broken = structuredClone(courses) as Mutable<typeof courses>;
+    const broken = cloneCourses();
     broken[0].gaps[0].requiredPieceId = "missing-piece";
 
     expect(validateCourses(trains, broken)).toContain(
       "course sora-1 gap sora-1-gap-1 requires unknown piece missing-piece",
+    );
+  });
+
+  it("rejects duplicate course ids", () => {
+    const broken = cloneCourses();
+    broken[1].id = broken[0].id;
+
+    expect(validateCourses(trains, broken)).toContain("duplicate course id sora-1");
+  });
+
+  it("rejects gaps that are not ordered by arrivalDistance", () => {
+    const broken = cloneCourses();
+    broken[1].gaps[0].arrivalDistance = 60;
+
+    expect(validateCourses(trains, broken)).toContain(
+      "course sora-2 gaps must be ordered by arrivalDistance",
+    );
+  });
+
+  it("rejects course sets that do not contain exactly 15 courses", () => {
+    const broken = cloneCourses().slice(0, 14);
+
+    expect(validateCourses(trains, broken)).toContain("expected 15 courses but found 14");
+  });
+
+  it("rejects ids that do not match trainId and difficulty", () => {
+    const broken = cloneCourses();
+    broken[0].trainId = "mori";
+    broken[0].difficulty = 2;
+
+    expect(validateCourses(trains, broken)).toContain(
+      "course sora-1 id expects train sora difficulty 1 but found train mori difficulty 2",
     );
   });
 });

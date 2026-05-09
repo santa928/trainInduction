@@ -1,4 +1,12 @@
-import type { CourseDefinition, Difficulty, RetryMode, TrainId } from "./types";
+import type {
+  CourseDefinition,
+  CourseId,
+  Difficulty,
+  GapDefinition,
+  PieceDefinition,
+  RetryMode,
+  TrainId,
+} from "./types";
 
 const path = [
   { x: 8, y: 50 },
@@ -16,22 +24,28 @@ const makeCourse = (
   difficulty: Difficulty,
   background: CourseDefinition["background"],
 ): CourseDefinition => {
-  const id = `${trainId}-${difficulty}` as CourseDefinition["id"];
+  const id = `${trainId}-${difficulty}` as CourseId;
   const gapCount = difficulty === 1 ? 1 : difficulty === 2 ? 2 : difficulty === 5 ? 4 : 3;
   const candidateCount = difficulty <= 2 ? 2 : difficulty === 3 ? 3 : 4;
-  const pieces = Array.from({ length: candidateCount }, (_, index) => ({
-    id: `${id}-piece-${index + 1}`,
-    shape: index % 2 === 0 ? "straight" : "curve",
-    direction: index % 2 === 0 ? "east" : index % 3 === 0 ? "southEast" : "northEast",
-    label: index % 2 === 0 ? "まっすぐ" : "くるん",
-  })) as CourseDefinition["pieces"];
+  const pieces = Array.from(
+    { length: candidateCount },
+    (_, index): PieceDefinition => ({
+      id: `${id}-piece-${index + 1}`,
+      shape: index % 2 === 0 ? "straight" : "curve",
+      direction: index % 2 === 0 ? "east" : index % 3 === 0 ? "southEast" : "northEast",
+      label: index % 2 === 0 ? "まっすぐ" : "くるん",
+    }),
+  );
 
-  const gaps = Array.from({ length: gapCount }, (_, index) => ({
-    id: `${id}-gap-${index + 1}`,
-    position: { x: 24 + index * 16, y: index % 2 === 0 ? 50 : 42 },
-    requiredPieceId: pieces[index % pieces.length].id,
-    arrivalDistance: 20 + index * 20,
-  })) as CourseDefinition["gaps"];
+  const gaps = Array.from(
+    { length: gapCount },
+    (_, index): GapDefinition => ({
+      id: `${id}-gap-${index + 1}`,
+      position: { x: 24 + index * 16, y: index % 2 === 0 ? 50 : 42 },
+      requiredPieceId: pieces[index % pieces.length].id,
+      arrivalDistance: 20 + index * 20,
+    }),
+  );
 
   return {
     id,

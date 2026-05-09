@@ -1,5 +1,16 @@
 import type { CourseDefinition, TrainDefinition } from "./types";
 
+const expectedCourseIdentity = (
+  id: CourseDefinition["id"],
+): { difficulty: number; trainId: string } => {
+  const [trainId, difficulty] = id.split("-");
+
+  return {
+    trainId,
+    difficulty: Number(difficulty),
+  };
+};
+
 /**
  * Returns human-readable consistency errors for authored train courses.
  */
@@ -12,6 +23,13 @@ export function validateCourses(
   const courseIds = new Set<string>();
 
   for (const course of courses) {
+    const expected = expectedCourseIdentity(course.id);
+    if (course.trainId !== expected.trainId || course.difficulty !== expected.difficulty) {
+      errors.push(
+        `course ${course.id} id expects train ${expected.trainId} difficulty ${expected.difficulty} but found train ${course.trainId} difficulty ${course.difficulty}`,
+      );
+    }
+
     if (!trainIds.has(course.trainId)) {
       errors.push(`course ${course.id} references unknown train ${course.trainId}`);
     }
