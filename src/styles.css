@@ -25,3 +25,69 @@ button {
   padding: 24px;
   text-align: center;
 }
+
+.screen {
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: center;
+}
+
+.card-grid,
+.course-list {
+  width: min(100%, 760px);
+  display: grid;
+  gap: 14px;
+}
+
+.card-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.train-card,
+.course-button,
+.text-button {
+  border: 0;
+  border-radius: 18px;
+  min-height: 72px;
+  padding: 18px;
+  cursor: pointer;
+}
+
+.train-card {
+  background: var(--train-color);
+  color: #123;
+  box-shadow: inset 0 -8px 0 color-mix(in srgb, var(--train-accent), #fff 45%);
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.train-emoji {
+  display: block;
+  font-size: 4rem;
+}
+
+.course-button {
+  background: #fff8d7;
+  color: #234;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.course-button small {
+  display: block;
+  margin-top: 6px;
+}
+
+.course-button:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.text-button {
+  align-self: flex-start;
+  background: #fff;
+  color: #245;
+}
