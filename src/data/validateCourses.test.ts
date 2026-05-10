@@ -34,19 +34,19 @@ describe("validateCourses", () => {
     expect(validateCourses(trains, broken)).toContain("duplicate course id sora-1");
   });
 
-  it("rejects pieces that look identical inside the same course", () => {
+  it("allows duplicate-looking pieces inside the same course", () => {
     const broken = cloneCourses();
     broken[0].pieces[1].shape = broken[0].pieces[0].shape;
     broken[0].pieces[1].direction = broken[0].pieces[0].direction;
 
-    expect(validateCourses(trains, broken)).toContain("course sora-1 has duplicate-looking piece straight:east");
+    expect(validateCourses(trains, broken)).not.toContain("course sora-1 has duplicate-looking piece straight:east");
   });
 
-  it("rejects using one piece as the answer for multiple gaps", () => {
+  it("allows equivalent pieces to satisfy repeated answer shapes", () => {
     const broken = cloneCourses();
     broken[1].gaps[1].requiredPieceId = broken[1].gaps[0].requiredPieceId;
 
-    expect(validateCourses(trains, broken)).toContain(
+    expect(validateCourses(trains, broken)).not.toContain(
       `course sora-2 uses piece ${broken[1].gaps[0].requiredPieceId} for multiple gaps`,
     );
   });

@@ -1,5 +1,6 @@
 import type { GameState } from "./createGameState";
 import { createGameState } from "./createGameState";
+import type { PieceDefinition } from "../data/types";
 
 export type GameAction =
   | { readonly type: "placePiece"; readonly pieceId: string; readonly gapId: string }
@@ -35,6 +36,18 @@ function createCheckpointRetryState(state: GameState): GameState {
     placements,
     status: "playing",
   };
+}
+
+/**
+ * Treats identical-looking rail cards as interchangeable answers.
+ */
+function isMatchingRailPiece(placedPiece: PieceDefinition | undefined, requiredPiece: PieceDefinition | undefined): boolean {
+  return Boolean(
+    placedPiece &&
+      requiredPiece &&
+      placedPiece.shape === requiredPiece.shape &&
+      placedPiece.direction === requiredPiece.direction,
+  );
 }
 
 /**
@@ -106,7 +119,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           break;
         }
         const placedPieceId = state.placements[nextGap.id];
-        if (placedPieceId !== nextGap.requiredPieceId) {
+        const placedPiece = state.course.pieces.find((piece) => piece.id === placedPieceId);
+        const requiredPiece = state.course.pieces.find((piece) => piece.id === nextGap.requiredPieceId);
+        if (!isMatchingRailPiece(placedPiece, requiredPiece)) {
           return { ...state, trainDistance, nextGapIndex, status: "retry" };
         }
         nextGapIndex += 1;

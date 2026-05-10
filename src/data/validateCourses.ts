@@ -11,6 +11,9 @@ const expectedCourseIdentity = (
   };
 };
 
+const pieceSignature = (piece: { readonly shape: string; readonly direction: string }): string =>
+  `${piece.shape}:${piece.direction}`;
+
 /**
  * Returns human-readable consistency errors for authored train courses.
  */
@@ -40,13 +43,10 @@ export function validateCourses(
     courseIds.add(course.id);
 
     const pieceIds = new Set(course.pieces.map((piece) => piece.id));
-    const pieceSignatures = new Set<string>();
+    const pieceCounts = new Map<string, number>();
     for (const piece of course.pieces) {
-      const signature = `${piece.shape}:${piece.direction}`;
-      if (pieceSignatures.has(signature)) {
-        errors.push(`course ${course.id} has duplicate-looking piece ${signature}`);
-      }
-      pieceSignatures.add(signature);
+      const signature = pieceSignature(piece);
+      pieceCounts.set(signature, (pieceCounts.get(signature) ?? 0) + 1);
     }
 
     for (const gap of course.gaps) {
@@ -74,12 +74,21 @@ export function validateCourses(
       }
     }
 
-    const requiredPieceIds = new Set<string>();
+    const requiredCounts = new Map<string, number>();
     for (const gap of course.gaps) {
-      if (requiredPieceIds.has(gap.requiredPieceId)) {
-        errors.push(`course ${course.id} uses piece ${gap.requiredPieceId} for multiple gaps`);
+      const requiredPiece = course.pieces.find((piece) => piece.id === gap.requiredPieceId);
+      if (requiredPiece) {
+        const signature = pieceSignature(requiredPiece);
+        requiredCounts.set(signature, (requiredCounts.get(signature) ?? 0) + 1);
       }
-      requiredPieceIds.add(gap.requiredPieceId);
+    }
+    for (const [signature, requiredCount] of requiredCounts) {
+      const availableCount = pieceCounts.get(signature) ?? 0;
+      if (availableCount < requiredCount) {
+        errors.push(
+          `course ${course.id} needs ${requiredCount} ${signature} pieces but only has ${availableCount}`,
+        );
+      }
     }
 
     const sorted = [...course.gaps].sort((a, b) => a.arrivalDistance - b.arrivalDistance);

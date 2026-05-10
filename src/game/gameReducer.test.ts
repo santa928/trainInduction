@@ -126,6 +126,25 @@ describe("gameReducer", () => {
     expect(next.status).toBe("cleared");
   });
 
+  it("accepts an equivalent-looking duplicate piece as a correct answer", () => {
+    const duplicatePieceCourse = {
+      ...course,
+      pieces: [
+        { ...course.pieces[0], id: "duplicate-piece" },
+        ...course.pieces,
+      ],
+    };
+    const placed = gameReducer(createGameState(duplicatePieceCourse), {
+      type: "placePiece",
+      pieceId: "duplicate-piece",
+      gapId: duplicatePieceCourse.gaps[0].id,
+    });
+
+    const next = gameReducer(placed, { type: "advanceTrain", deltaDistance: 120 });
+
+    expect(next.status).toBe("cleared");
+  });
+
   it("clears every authored course when each gap has its required piece", () => {
     for (const authoredCourse of courses) {
       const placed = authoredCourse.gaps.reduce(

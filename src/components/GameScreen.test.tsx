@@ -36,6 +36,9 @@ async function advanceAfterStartPause(ms: number): Promise<void> {
   });
 }
 
+const travelMs = (course: typeof courses[number], distancePercent: number): number =>
+  Math.ceil(distancePercent / course.trainSpeed) + 1000;
+
 describe("GameScreen", () => {
   afterEach(() => {
     vi.useRealTimers();
@@ -110,7 +113,7 @@ describe("GameScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: /よこ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await advanceAfterStartPause(16000);
+    await advanceAfterStartPause(travelMs(courses[0], 100));
     await act(async () => {
       await vi.advanceTimersByTimeAsync(2000);
     });
@@ -125,7 +128,7 @@ describe("GameScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: /みぎうえ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await advanceAfterStartPause(12000);
+    await advanceAfterStartPause(travelMs(courses[0], courses[0].gaps[0].arrivalDistance));
 
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).getByRole("heading", { name: "ここからもういっかい！" })).toBeInTheDocument();
@@ -148,7 +151,7 @@ describe("GameScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: /みぎうえ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await advanceAfterStartPause(12000);
+    await advanceAfterStartPause(travelMs(courses[0], courses[0].gaps[0].arrivalDistance));
 
     const dialog = screen.getByRole("dialog");
     const retryButton = within(dialog).getByRole("button", { name: "もういちど" });

@@ -28,8 +28,6 @@ const retryMode = (difficulty: Difficulty): RetryMode => (difficulty <= 2 ? "che
 
 const point = (x: number, y: number): RailPoint => ({ x, y });
 
-const signature = (piece: PieceTemplate): string => `${piece.shape}:${piece.direction}`;
-
 const pieceLabel = (shape: RailShape, direction: RailDirection): string => {
   if (shape === "straight" || shape === "bridge") {
     return direction === "north" || direction === "south" ? "たて" : shape === "bridge" ? "はし" : "よこ";
@@ -102,6 +100,14 @@ export const getPathTile = (course: CourseDefinition, pathIndex: number): PieceT
 const gapArrivalDistance = (pathLength: number, index: number): number =>
   Math.round((index / Math.max(1, pathLength - 1)) * 100);
 
+const trainSpeedByDifficulty: Record<Difficulty, number> = {
+  1: 0.003,
+  2: 0.0034,
+  3: 0.0038,
+  4: 0.0042,
+  5: 0.0042,
+};
+
 const templates: Record<Difficulty, CourseTemplate> = {
   1: {
     grid: { columns: 5, rows: 5 },
@@ -122,20 +128,23 @@ const templates: Record<Difficulty, CourseTemplate> = {
     distractors: [rail("curve", "southWest")],
   },
   4: {
-    grid: { columns: 6, rows: 5 },
+    grid: { columns: 6, rows: 6 },
     path: [
-      point(1, 5),
-      point(2, 5),
-      point(2, 4),
-      point(2, 3),
-      point(3, 3),
+      point(1, 6),
+      point(2, 6),
+      point(3, 6),
+      point(3, 5),
+      point(3, 4),
+      point(4, 4),
+      point(5, 4),
+      point(5, 3),
       point(4, 3),
       point(4, 2),
       point(5, 2),
       point(6, 2),
     ],
-    gapIndexes: [2, 4, 6],
-    distractors: [rail("straight", "north")],
+    gapIndexes: [2, 4, 6, 8],
+    distractors: [],
   },
   5: {
     grid: { columns: 6, rows: 6 },
@@ -146,12 +155,14 @@ const templates: Record<Difficulty, CourseTemplate> = {
       point(3, 5),
       point(4, 5),
       point(4, 4),
+      point(3, 4),
+      point(3, 3),
       point(4, 3),
       point(5, 3),
       point(5, 2),
       point(6, 2),
     ],
-    gapIndexes: [2, 3, 4, 5],
+    gapIndexes: [2, 4, 6, 8, 10],
     distractors: [],
   },
 };
@@ -159,17 +170,8 @@ const templates: Record<Difficulty, CourseTemplate> = {
 const makePieces = (id: CourseId, template: CourseTemplate): readonly PieceDefinition[] => {
   const requiredPieces = template.gapIndexes.map((index) => tileForPathIndex(template.path, index));
   const allPieces = [...requiredPieces, ...template.distractors];
-  const seen = new Set<string>();
 
   return allPieces
-    .filter((piece) => {
-      const key = signature(piece);
-      if (seen.has(key)) {
-        return false;
-      }
-      seen.add(key);
-      return true;
-    })
     .map((piece, index) => ({
       id: `${id}-piece-${index + 1}`,
       shape: piece.shape,
@@ -180,8 +182,7 @@ const makePieces = (id: CourseId, template: CourseTemplate): readonly PieceDefin
 
 const makeGaps = (id: CourseId, template: CourseTemplate, pieces: readonly PieceDefinition[]): readonly GapDefinition[] =>
   template.gapIndexes.map((pathIndex, gapIndex) => {
-    const required = tileForPathIndex(template.path, pathIndex);
-    const requiredPiece = pieces.find((piece) => signature(piece) === signature(required));
+    const requiredPiece = pieces[gapIndex];
     if (!requiredPiece) {
       throw new Error(`missing required piece for ${id} gap ${gapIndex + 1}`);
     }
@@ -210,7 +211,7 @@ const makeCourse = (
     difficulty,
     background,
     grid: template.grid,
-    trainSpeed: 0.006 + difficulty * 0.002,
+    trainSpeed: trainSpeedByDifficulty[difficulty],
     retryMode: retryMode(difficulty),
     path: template.path,
     pieces,

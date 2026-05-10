@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
+import { courses } from "./data/courses";
 
 describe("App navigation", () => {
   beforeEach(() => {
@@ -23,6 +24,9 @@ describe("App navigation", () => {
       await vi.advanceTimersByTimeAsync(ms);
     });
   }
+
+  const travelMs = (distancePercent: number): number =>
+    Math.ceil(distancePercent / courses[0].trainSpeed) + 1000;
 
   it("starts with train selection and opens course selection", async () => {
     render(<App />);
@@ -74,7 +78,7 @@ describe("App navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: /よこ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await advanceAfterStartPause(16000);
+    await advanceAfterStartPause(travelMs(100));
 
     expect(screen.getByRole("heading", { name: "えきについたよ！" })).toBeInTheDocument();
 
@@ -95,7 +99,7 @@ describe("App navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: /よこ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await advanceAfterStartPause(16000);
+    await advanceAfterStartPause(travelMs(100));
 
     fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "つぎへ" }));
 
