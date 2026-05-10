@@ -39,6 +39,6 @@ describe("App navigation", () => {
     await userEvent.click(screen.getByRole("button", { name: /そらでんしゃ/ }));
     await userEvent.click(screen.getByRole("button", { name: /1ばんめのたび/ }));
 
-    expect(screen.getByRole("heading", { name: "1ばんめのたび" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "1ばんめのたび" })).toHaveFocus();
   });
 });

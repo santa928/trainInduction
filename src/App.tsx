@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CourseSelect } from "./components/CourseSelect";
 import { TrainSelect } from "./components/TrainSelect";
 import { courses } from "./data/courses";
@@ -10,6 +10,29 @@ type Screen =
   | { readonly name: "trainSelect" }
   | { readonly name: "courseSelect"; readonly trainId: TrainId }
   | { readonly name: "game"; readonly course: CourseDefinition };
+
+interface GamePlaceholderProps {
+  readonly course: CourseDefinition;
+}
+
+/**
+ * Temporarily renders the selected course until Task 6 replaces it with GameScreen.
+ */
+function GamePlaceholder({ course }: GamePlaceholderProps): React.JSX.Element {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
+  return (
+    <main className="screen">
+      <h1 ref={headingRef} tabIndex={-1}>
+        {course.title}
+      </h1>
+    </main>
+  );
+}
 
 /**
  * Coordinates top-level game screens and persisted progress.
@@ -43,11 +66,7 @@ export default function App(): React.JSX.Element {
   }
 
   if (screen.name === "game") {
-    return (
-      <main className="screen">
-        <h1>{screen.course.title}</h1>
-      </main>
-    );
+    return <GamePlaceholder course={screen.course} />;
   }
 
   return <TrainSelect trains={trains} onSelectTrain={(trainId) => setScreen({ name: "courseSelect", trainId })} />;
