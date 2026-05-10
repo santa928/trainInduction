@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
-import type { CourseDefinition } from "../data/types";
+import type { CourseDefinition, GapDefinition } from "../data/types";
 import { createGameState } from "../game/createGameState";
 import { gameReducer } from "../game/gameReducer";
 import { RailPiece } from "./RailPiece";
@@ -9,6 +9,29 @@ interface GameScreenProps {
   readonly course: CourseDefinition;
   readonly onClear: (course: CourseDefinition) => void;
   readonly onExit: () => void;
+}
+
+interface GapSlotLayout {
+  readonly leftPercent: number;
+  readonly topPercent: number;
+}
+
+/**
+ * Creates display-only gap positions with enough mobile spacing for large touch slots.
+ */
+export function createGapSlotLayouts(gaps: readonly GapDefinition[]): readonly GapSlotLayout[] {
+  if (gaps.length <= 1) {
+    return gaps.map((gap) => ({ leftPercent: gap.position.x, topPercent: gap.position.y }));
+  }
+
+  const firstX = gaps.length === 2 ? 30 : gaps.length === 3 ? 22 : 20;
+  const lastX = gaps.length === 2 ? 70 : gaps.length === 3 ? 78 : 80;
+  const step = (lastX - firstX) / (gaps.length - 1);
+
+  return gaps.map((_, index) => ({
+    leftPercent: firstX + step * index,
+    topPercent: index % 2 === 0 ? 38 : 62,
+  }));
 }
 
 /**
@@ -23,6 +46,7 @@ export function GameScreen({ course, onClear, onExit }: GameScreenProps): React.
     () => new Map(course.pieces.map((piece) => [piece.id, piece] as const)),
     [course.pieces],
   );
+  const gapSlotLayouts = useMemo(() => createGapSlotLayouts(course.gaps), [course.gaps]);
   const trainPosition = 10 + Math.min(state.trainDistance, 100) * 0.8;
 
   useEffect(() => {
@@ -80,11 +104,12 @@ export function GameScreen({ course, onClear, onExit }: GameScreenProps): React.
         </div>
         {course.gaps.map((gap, index) => {
           const placedPiece = state.placements[gap.id] ? piecesById.get(state.placements[gap.id]) : undefined;
+          const layout = gapSlotLayouts[index] ?? { leftPercent: gap.position.x, topPercent: gap.position.y };
           return (
             <button
               key={gap.id}
               className="gap-slot"
-              style={{ left: `${gap.position.x}%`, top: `${gap.position.y}%` }}
+              style={{ left: `${layout.leftPercent}%`, top: `${layout.topPercent}%` }}
               aria-label={`あな ${index + 1}${placedPiece ? ` ${placedPiece.label}` : ""}`}
               onClick={() => handleGapClick(gap.id)}
             >

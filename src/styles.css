@@ -167,8 +167,9 @@ button {
   background: #fffdf2;
   border: 5px solid #ffbf47;
   font-size: 2.35rem;
+  pointer-events: none;
   transition: left 90ms linear;
-  z-index: 3;
+  z-index: 1;
 }
 
 .gap-slot {
