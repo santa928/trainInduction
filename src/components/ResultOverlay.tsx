@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import type { GameStatus } from "../game/createGameState";
 import type { RetryMode } from "../data/types";
@@ -25,6 +25,8 @@ export function ResultOverlay({
 }: ResultOverlayProps): React.JSX.Element {
   const panelRef = useRef<HTMLDivElement>(null);
   const retryButtonRef = useRef<HTMLButtonElement>(null);
+  const actionLockedRef = useRef(false);
+  const [actionLocked, setActionLocked] = useState(false);
   const isCleared = status === "cleared";
   const message = isCleared
     ? "えきについたよ！"
@@ -60,6 +62,15 @@ export function ResultOverlay({
     buttons[nextIndex].focus();
   };
 
+  const runOnce = (action: () => void): void => {
+    if (actionLockedRef.current) {
+      return;
+    }
+    actionLockedRef.current = true;
+    setActionLocked(true);
+    action();
+  };
+
   return (
     <div
       className="result-overlay"
@@ -71,18 +82,23 @@ export function ResultOverlay({
       <div ref={panelRef} className="result-panel">
         <h2 id="result-title">{message}</h2>
         <div className="result-actions">
-          <button ref={retryButtonRef} className="result-button result-button-primary" onClick={onRetry}>
+          <button
+            ref={retryButtonRef}
+            className="result-button result-button-primary"
+            disabled={actionLocked}
+            onClick={() => runOnce(onRetry)}
+          >
             もういちど
           </button>
           {isCleared && onNext ? (
-            <button className="result-button result-button-next" onClick={onNext}>
+            <button className="result-button result-button-next" disabled={actionLocked} onClick={() => runOnce(onNext)}>
               つぎへ
             </button>
           ) : null}
-          <button className="result-button" onClick={onExit}>
+          <button className="result-button" disabled={actionLocked} onClick={() => runOnce(onExit)}>
             コースをえらぶ
           </button>
-          <button className="result-button" onClick={onTrainSelect}>
+          <button className="result-button" disabled={actionLocked} onClick={() => runOnce(onTrainSelect)}>
             でんしゃをえらぶ
           </button>
         </div>

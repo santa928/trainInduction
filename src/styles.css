@@ -143,21 +143,65 @@ button {
   background: linear-gradient(#42537f 0 58%, #6cb17b 58%);
 }
 
-.track-line {
+.track-map {
   position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 50%;
-  height: 26px;
-  transform: translateY(-50%);
-  border-radius: 999px;
-  background: repeating-linear-gradient(90deg, #ffe4a8 0 18px, #845a3a 18px 26px);
-  box-shadow: 0 9px 0 #6c513d;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.track-route {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.track-route-shadow {
+  stroke: #6c513d;
+  stroke-width: 28;
+  opacity: 0.45;
+  transform: translateY(5px);
+}
+
+.track-route-base {
+  stroke: #f7d68a;
+  stroke-width: 24;
+}
+
+.track-route-rail {
+  stroke: #5b4032;
+  stroke-width: 10;
+  stroke-dasharray: 18 10;
+}
+
+.station-token {
+  position: absolute;
+  min-width: 82px;
+  padding: 8px 10px;
+  border: 4px solid #fff;
+  border-radius: 18px;
+  background: #fffdf2;
+  color: #345;
+  font-size: 0.95rem;
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 5px 0 rgb(108 81 61 / 22%);
+  z-index: 1;
+}
+
+.station-token-start {
+  left: 4%;
+  top: 10%;
+}
+
+.station-token-goal {
+  right: 4%;
+  top: 10%;
 }
 
 .train-token {
   position: absolute;
-  top: 37%;
   width: 72px;
   height: 72px;
   display: grid;
@@ -183,7 +227,9 @@ button {
   transform: translate(-50%, -50%);
   border: 5px dashed #8b6a42;
   border-radius: 22px;
-  background: #fffdf4;
+  background:
+    radial-gradient(circle at center, rgb(255 255 255 / 96%) 0 58%, rgb(255 240 190 / 96%) 60%),
+    #fffdf4;
   color: #345;
   cursor: pointer;
   font-weight: 900;
@@ -306,6 +352,11 @@ button {
   color: #234;
   cursor: pointer;
   font-weight: 900;
+}
+
+.result-button:disabled {
+  opacity: 0.58;
+  cursor: wait;
 }
 
 .result-button-primary {

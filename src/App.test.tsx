@@ -59,7 +59,7 @@ describe("App navigation", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /そらでんしゃ/ }));
     fireEvent.click(screen.getByRole("button", { name: /1ばんめのたび/ }));
-    fireEvent.click(screen.getByRole("button", { name: /まっすぐ/ }));
+    fireEvent.click(screen.getByRole("button", { name: /よこ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
     await act(async () => {
@@ -82,7 +82,7 @@ describe("App navigation", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /そらでんしゃ/ }));
     fireEvent.click(screen.getByRole("button", { name: /1ばんめのたび/ }));
-    fireEvent.click(screen.getByRole("button", { name: /まっすぐ/ }));
+    fireEvent.click(screen.getByRole("button", { name: /よこ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
     await act(async () => {

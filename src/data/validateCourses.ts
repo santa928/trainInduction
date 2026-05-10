@@ -40,6 +40,15 @@ export function validateCourses(
     courseIds.add(course.id);
 
     const pieceIds = new Set(course.pieces.map((piece) => piece.id));
+    const pieceSignatures = new Set<string>();
+    for (const piece of course.pieces) {
+      const signature = `${piece.shape}:${piece.direction}`;
+      if (pieceSignatures.has(signature)) {
+        errors.push(`course ${course.id} has duplicate-looking piece ${signature}`);
+      }
+      pieceSignatures.add(signature);
+    }
+
     for (const gap of course.gaps) {
       if (!pieceIds.has(gap.requiredPieceId)) {
         errors.push(`course ${course.id} gap ${gap.id} requires unknown piece ${gap.requiredPieceId}`);

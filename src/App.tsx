@@ -60,6 +60,7 @@ export default function App(): React.JSX.Element {
     const nextCourse = findNextCourse(screen.course);
     return (
       <GameScreen
+        key={screen.course.id}
         course={screen.course}
         onClear={handleClear}
         onExit={() => setScreen({ name: "courseSelect", trainId: screen.trainId })}

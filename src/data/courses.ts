@@ -4,20 +4,157 @@ import type {
   Difficulty,
   GapDefinition,
   PieceDefinition,
+  RailDirection,
+  RailPoint,
+  RailShape,
   RetryMode,
   TrainId,
 } from "./types";
 
-const path = [
-  { x: 8, y: 50 },
-  { x: 28, y: 50 },
-  { x: 48, y: 50 },
-  { x: 68, y: 50 },
-  { x: 92, y: 50 },
-] as const;
+interface PieceTemplate {
+  readonly shape: RailShape;
+  readonly direction: RailDirection;
+  readonly label: string;
+}
 
-const retryMode = (difficulty: Difficulty): RetryMode =>
-  difficulty <= 2 ? "checkpoint" : "courseStart";
+interface GapTemplate extends PieceTemplate {
+  readonly position: RailPoint;
+  readonly arrivalDistance: number;
+}
+
+interface CourseTemplate {
+  readonly path: readonly RailPoint[];
+  readonly gaps: readonly GapTemplate[];
+  readonly distractors: readonly PieceTemplate[];
+}
+
+const retryMode = (difficulty: Difficulty): RetryMode => (difficulty <= 2 ? "checkpoint" : "courseStart");
+
+const pieceLabel = (shape: RailShape, direction: RailDirection): string => {
+  if (shape === "straight" || shape === "bridge") {
+    return direction === "north" || direction === "south" ? "たて" : shape === "bridge" ? "はし" : "よこ";
+  }
+
+  const labels: Record<RailDirection, string> = {
+    east: "よこ",
+    west: "よこ",
+    north: "たて",
+    south: "たて",
+    northEast: "みぎうえ",
+    southEast: "みぎした",
+    southWest: "ひだりした",
+    northWest: "ひだりうえ",
+  };
+  return labels[direction];
+};
+
+const rail = (shape: RailShape, direction: RailDirection): PieceTemplate => ({
+  shape,
+  direction,
+  label: pieceLabel(shape, direction),
+});
+
+const gap = (
+  position: RailPoint,
+  arrivalDistance: number,
+  shape: RailShape,
+  direction: RailDirection,
+): GapTemplate => ({
+  ...rail(shape, direction),
+  position,
+  arrivalDistance,
+});
+
+const templates: Record<Difficulty, CourseTemplate> = {
+  1: {
+    path: [
+      { x: 8, y: 58 },
+      { x: 44, y: 58 },
+      { x: 92, y: 58 },
+    ],
+    gaps: [gap({ x: 48, y: 58 }, 34, "straight", "east")],
+    distractors: [rail("curve", "northEast")],
+  },
+  2: {
+    path: [
+      { x: 8, y: 66 },
+      { x: 34, y: 66 },
+      { x: 34, y: 36 },
+      { x: 92, y: 36 },
+    ],
+    gaps: [gap({ x: 34, y: 66 }, 28, "curve", "northWest"), gap({ x: 62, y: 36 }, 66, "straight", "east")],
+    distractors: [rail("straight", "north")],
+  },
+  3: {
+    path: [
+      { x: 8, y: 72 },
+      { x: 32, y: 72 },
+      { x: 32, y: 42 },
+      { x: 58, y: 42 },
+      { x: 58, y: 70 },
+      { x: 92, y: 70 },
+    ],
+    gaps: [
+      gap({ x: 32, y: 72 }, 24, "curve", "northWest"),
+      gap({ x: 32, y: 42 }, 48, "curve", "southEast"),
+      gap({ x: 58, y: 42 }, 68, "curve", "southWest"),
+    ],
+    distractors: [rail("straight", "east")],
+  },
+  4: {
+    path: [
+      { x: 8, y: 76 },
+      { x: 26, y: 76 },
+      { x: 26, y: 48 },
+      { x: 52, y: 48 },
+      { x: 52, y: 72 },
+      { x: 78, y: 72 },
+      { x: 78, y: 36 },
+      { x: 92, y: 36 },
+    ],
+    gaps: [
+      gap({ x: 26, y: 76 }, 20, "curve", "northWest"),
+      gap({ x: 26, y: 48 }, 42, "curve", "southEast"),
+      gap({ x: 52, y: 48 }, 60, "curve", "southWest"),
+    ],
+    distractors: [rail("straight", "north")],
+  },
+  5: {
+    path: [
+      { x: 8, y: 70 },
+      { x: 24, y: 70 },
+      { x: 24, y: 42 },
+      { x: 48, y: 42 },
+      { x: 48, y: 70 },
+      { x: 72, y: 70 },
+      { x: 72, y: 34 },
+      { x: 92, y: 34 },
+    ],
+    gaps: [
+      gap({ x: 24, y: 70 }, 18, "curve", "northWest"),
+      gap({ x: 24, y: 42 }, 42, "curve", "southEast"),
+      gap({ x: 48, y: 42 }, 58, "curve", "southWest"),
+      gap({ x: 48, y: 70 }, 74, "curve", "northEast"),
+    ],
+    distractors: [],
+  },
+};
+
+const makePieces = (id: CourseId, template: CourseTemplate): readonly PieceDefinition[] =>
+  [...template.gaps, ...template.distractors].map((piece, index) => ({
+    id: `${id}-piece-${index + 1}`,
+    shape: piece.shape,
+    direction: piece.direction,
+    label: piece.label,
+  }));
+
+const makeGaps = (id: CourseId, template: CourseTemplate, pieces: readonly PieceDefinition[]): readonly GapDefinition[] =>
+  template.gaps.map((gapTemplate, index) => ({
+    id: `${id}-gap-${index + 1}`,
+    position: gapTemplate.position,
+    requiredPieceId: pieces[index].id,
+    arrivalDistance: gapTemplate.arrivalDistance,
+  }));
 
 const makeCourse = (
   trainId: TrainId,
@@ -25,27 +162,8 @@ const makeCourse = (
   background: CourseDefinition["background"],
 ): CourseDefinition => {
   const id = `${trainId}-${difficulty}` as CourseId;
-  const gapCount = difficulty === 1 ? 1 : difficulty === 2 ? 2 : difficulty === 5 ? 4 : 3;
-  const candidateCount = difficulty <= 2 ? 2 : difficulty === 3 ? 3 : 4;
-  const pieces = Array.from(
-    { length: candidateCount },
-    (_, index): PieceDefinition => ({
-      id: `${id}-piece-${index + 1}`,
-      shape: index % 2 === 0 ? "straight" : "curve",
-      direction: index % 2 === 0 ? "east" : index % 3 === 0 ? "southEast" : "northEast",
-      label: index % 2 === 0 ? "まっすぐ" : "くるん",
-    }),
-  );
-
-  const gaps = Array.from(
-    { length: gapCount },
-    (_, index): GapDefinition => ({
-      id: `${id}-gap-${index + 1}`,
-      position: { x: 24 + index * 16, y: index % 2 === 0 ? 50 : 42 },
-      requiredPieceId: pieces[index % pieces.length].id,
-      arrivalDistance: 32 + index * 18,
-    }),
-  );
+  const template = templates[difficulty];
+  const pieces = makePieces(id, template);
 
   return {
     id,
@@ -55,9 +173,9 @@ const makeCourse = (
     background,
     trainSpeed: 0.006 + difficulty * 0.002,
     retryMode: retryMode(difficulty),
-    path,
+    path: template.path,
     pieces,
-    gaps,
+    gaps: makeGaps(id, template, pieces),
   };
 };
 

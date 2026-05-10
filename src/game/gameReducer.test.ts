@@ -126,6 +126,24 @@ describe("gameReducer", () => {
     expect(next.status).toBe("cleared");
   });
 
+  it("clears every authored course when each gap has its required piece", () => {
+    for (const authoredCourse of courses) {
+      const placed = authoredCourse.gaps.reduce(
+        (currentState, gap) =>
+          gameReducer(currentState, {
+            type: "placePiece",
+            pieceId: gap.requiredPieceId,
+            gapId: gap.id,
+          }),
+        createGameState(authoredCourse),
+      );
+
+      const cleared = gameReducer(placed, { type: "advanceTrain", deltaDistance: 120 });
+
+      expect(cleared.status, authoredCourse.id).toBe("cleared");
+    }
+  });
+
   it("processes every reached gap when advancing across multiple gaps", () => {
     const withFirstPiece = gameReducer(createGameState(multiGapCourse), {
       type: "placePiece",

@@ -2,14 +2,14 @@ import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { courses } from "../data/courses";
-import { createGapSlotLayouts, GameScreen } from "./GameScreen";
+import { GameScreen, getRoutePoint } from "./GameScreen";
 
 const mobileBoard = { width: 355, height: 557 };
 const gapSlot = { width: 82, height: 82 };
 
-function toRect(layout: { readonly leftPercent: number; readonly topPercent: number }): DOMRectReadOnly {
-  const centerX = (layout.leftPercent / 100) * mobileBoard.width;
-  const centerY = (layout.topPercent / 100) * mobileBoard.height;
+function toRect(position: { readonly x: number; readonly y: number }): DOMRectReadOnly {
+  const centerX = (position.x / 100) * mobileBoard.width;
+  const centerY = (position.y / 100) * mobileBoard.height;
   return new DOMRectReadOnly(centerX - gapSlot.width / 2, centerY - gapSlot.height / 2, gapSlot.width, gapSlot.height);
 }
 
@@ -46,27 +46,27 @@ describe("GameScreen", () => {
   it("places a selected tray piece into a gap", async () => {
     renderGameScreen();
 
-    await userEvent.click(screen.getByRole("button", { name: /まっすぐ/ }));
+    await userEvent.click(screen.getByRole("button", { name: /よこ/ }));
     await userEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    expect(screen.getByRole("button", { name: /あな 1.*まっすぐ/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /あな 1.*よこ/ })).toBeInTheDocument();
   });
 
   it("places a dragged tray piece into a gap", () => {
     renderGameScreen();
 
-    const pieceButton = screen.getByRole("button", { name: /まっすぐ/ });
+    const pieceButton = screen.getByRole("button", { name: /よこ/ });
     const gapButton = screen.getByRole("button", { name: /あな 1/ });
     fireEvent.dragStart(pieceButton);
     fireEvent.dragOver(gapButton);
     fireEvent.drop(gapButton);
 
-    expect(screen.getByRole("button", { name: /あな 1.*まっすぐ/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /あな 1.*よこ/ })).toBeInTheDocument();
   });
 
   it("keeps difficulty 4 and 5 gap slots from overlapping on a 375px mobile board", () => {
     for (const course of [courses[3], courses[4]]) {
-      const rects = createGapSlotLayouts(course.gaps).map(toRect);
+      const rects = course.gaps.map((gap) => toRect(gap.position));
 
       for (const [index, rect] of rects.entries()) {
         for (const nextRect of rects.slice(index + 1)) {
@@ -76,12 +76,19 @@ describe("GameScreen", () => {
     }
   });
 
+  it("places the train on the top-down route", () => {
+    const point = getRoutePoint(courses[1].path, courses[1].gaps[0].arrivalDistance);
+
+    expect(point.x).toBeGreaterThan(20);
+    expect(point.y).toBeGreaterThan(45);
+  });
+
   it("calls onClear only once for the same clear state", async () => {
     vi.useFakeTimers();
     const handleClear = vi.fn();
     renderGameScreen(courses[0], { onClear: handleClear });
 
-    fireEvent.click(screen.getByRole("button", { name: /まっすぐ/ }));
+    fireEvent.click(screen.getByRole("button", { name: /よこ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
     await act(async () => {
@@ -98,7 +105,7 @@ describe("GameScreen", () => {
     vi.useFakeTimers();
     renderGameScreen();
 
-    fireEvent.click(screen.getByRole("button", { name: /くるん/ }));
+    fireEvent.click(screen.getByRole("button", { name: /みぎうえ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
     await act(async () => {
@@ -117,7 +124,7 @@ describe("GameScreen", () => {
     vi.useFakeTimers();
     renderGameScreen();
 
-    fireEvent.click(screen.getByRole("button", { name: /くるん/ }));
+    fireEvent.click(screen.getByRole("button", { name: /みぎうえ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
     await act(async () => {

@@ -34,9 +34,17 @@ describe("validateCourses", () => {
     expect(validateCourses(trains, broken)).toContain("duplicate course id sora-1");
   });
 
+  it("rejects pieces that look identical inside the same course", () => {
+    const broken = cloneCourses();
+    broken[0].pieces[1].shape = broken[0].pieces[0].shape;
+    broken[0].pieces[1].direction = broken[0].pieces[0].direction;
+
+    expect(validateCourses(trains, broken)).toContain("course sora-1 has duplicate-looking piece straight:east");
+  });
+
   it("rejects gaps that are not ordered by arrivalDistance", () => {
     const broken = cloneCourses();
-    broken[1].gaps[0].arrivalDistance = 60;
+    broken[1].gaps[0].arrivalDistance = 80;
 
     expect(validateCourses(trains, broken)).toContain(
       "course sora-2 gaps must be ordered by arrivalDistance",
