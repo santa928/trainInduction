@@ -86,6 +86,14 @@ export function validateCourses(
     if (sorted.some((gap, index) => gap.id !== course.gaps[index]?.id)) {
       errors.push(`course ${course.id} gaps must be ordered by arrivalDistance`);
     }
+
+    const firstGap = course.gaps[0];
+    const firstGapPathIndex = firstGap
+      ? course.path.findIndex((point) => point.x === firstGap.position.x && point.y === firstGap.position.y)
+      : -1;
+    if (firstGap && firstGapPathIndex <= 1) {
+      errors.push(`course ${course.id} first gap is too close to the start`);
+    }
   }
 
   if (courses.length !== 15) {

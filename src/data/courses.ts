@@ -112,13 +112,13 @@ const templates: Record<Difficulty, CourseTemplate> = {
   2: {
     grid: { columns: 5, rows: 5 },
     path: [point(1, 4), point(2, 4), point(2, 3), point(2, 2), point(3, 2), point(4, 2), point(5, 2)],
-    gapIndexes: [1, 4],
+    gapIndexes: [2, 4],
     distractors: [rail("straight", "north")],
   },
   3: {
     grid: { columns: 5, rows: 5 },
     path: [point(1, 5), point(2, 5), point(2, 4), point(3, 4), point(4, 4), point(4, 3), point(4, 2), point(5, 2)],
-    gapIndexes: [1, 3, 5],
+    gapIndexes: [2, 4, 5],
     distractors: [rail("curve", "southWest")],
   },
   4: {
@@ -134,7 +134,7 @@ const templates: Record<Difficulty, CourseTemplate> = {
       point(5, 2),
       point(6, 2),
     ],
-    gapIndexes: [1, 4, 6],
+    gapIndexes: [2, 4, 6],
     distractors: [rail("straight", "north")],
   },
   5: {
@@ -151,7 +151,7 @@ const templates: Record<Difficulty, CourseTemplate> = {
       point(5, 2),
       point(6, 2),
     ],
-    gapIndexes: [1, 2, 3, 5],
+    gapIndexes: [2, 3, 4, 5],
     distractors: [],
   },
 };

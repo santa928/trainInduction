@@ -4,22 +4,6 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { courses } from "../data/courses";
 import { GameScreen, getRoutePoint } from "./GameScreen";
 
-const mobileBoard = { width: 355, height: 557 };
-
-function toRect(course: typeof courses[number], position: { readonly x: number; readonly y: number }): DOMRectReadOnly {
-  const cellWidth = mobileBoard.width / course.grid.columns;
-  const cellHeight = mobileBoard.height / course.grid.rows;
-  const centerX = ((position.x - 0.5) / course.grid.columns) * mobileBoard.width;
-  const centerY = ((position.y - 0.5) / course.grid.rows) * mobileBoard.height;
-  const size = Math.min(cellWidth, cellHeight);
-  const gapSlot = { width: size, height: size };
-  return new DOMRectReadOnly(centerX - gapSlot.width / 2, centerY - gapSlot.height / 2, gapSlot.width, gapSlot.height);
-}
-
-function intersects(first: DOMRectReadOnly, second: DOMRectReadOnly): boolean {
-  return first.left < second.right && first.right > second.left && first.top < second.bottom && first.bottom > second.top;
-}
-
 function renderGameScreen(
   course = courses[0],
   props: {
@@ -38,6 +22,18 @@ function renderGameScreen(
       onNext={props.onNext}
     />,
   );
+}
+
+/**
+ * Advances fake timers past the 1.5s start pause, then lets the train run.
+ */
+async function advanceAfterStartPause(ms: number): Promise<void> {
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(1500);
+  });
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(ms);
+  });
 }
 
 describe("GameScreen", () => {
@@ -67,15 +63,11 @@ describe("GameScreen", () => {
     expect(screen.getByRole("button", { name: /あな 1.*よこ/ })).toBeInTheDocument();
   });
 
-  it("keeps difficulty 4 and 5 gap slots from overlapping on a 375px mobile board", () => {
+  it("keeps difficulty 4 and 5 gap slots on unique grid cells", () => {
     for (const course of [courses[3], courses[4]]) {
-      const rects = course.gaps.map((gap) => toRect(course, gap.position));
+      const cells = course.gaps.map((gap) => `${gap.position.x}:${gap.position.y}`);
 
-      for (const [index, rect] of rects.entries()) {
-        for (const nextRect of rects.slice(index + 1)) {
-          expect(intersects(rect, nextRect)).toBe(false);
-        }
-      }
+      expect(new Set(cells).size).toBe(cells.length);
     }
   });
 
@@ -86,6 +78,30 @@ describe("GameScreen", () => {
     expect(point.y).toBeGreaterThan(3);
   });
 
+  it("waits before the train starts moving", async () => {
+    vi.useFakeTimers();
+    renderGameScreen();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1200);
+    });
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "あな 1" })).toBeInTheDocument();
+  });
+
+  it("starts moving after the opening wait", async () => {
+    vi.useFakeTimers();
+    renderGameScreen();
+    const trainToken = document.querySelector<HTMLElement>(".train-token");
+
+    expect(trainToken?.style.left).toBe("10%");
+
+    await advanceAfterStartPause(200);
+
+    expect(trainToken?.style.left).not.toBe("10%");
+  });
+
   it("calls onClear only once for the same clear state", async () => {
     vi.useFakeTimers();
     const handleClear = vi.fn();
@@ -94,9 +110,7 @@ describe("GameScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: /よこ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(13000);
-    });
+    await advanceAfterStartPause(16000);
     await act(async () => {
       await vi.advanceTimersByTimeAsync(2000);
     });
@@ -111,9 +125,7 @@ describe("GameScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: /みぎうえ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(8000);
-    });
+    await advanceAfterStartPause(12000);
 
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).getByRole("heading", { name: "ここからもういっかい！" })).toBeInTheDocument();
@@ -136,9 +148,7 @@ describe("GameScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: /みぎうえ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(8000);
-    });
+    await advanceAfterStartPause(12000);
 
     const dialog = screen.getByRole("dialog");
     const retryButton = within(dialog).getByRole("button", { name: "もういちど" });
@@ -160,13 +170,13 @@ describe("GameScreen", () => {
     expect(trainSelectButton).toHaveFocus();
   });
 
-  it("cleans up the train interval when unmounted", () => {
+  it("cleans up the start pause timeout when unmounted", () => {
     vi.useFakeTimers();
-    const clearIntervalSpy = vi.spyOn(window, "clearInterval");
+    const clearTimeoutSpy = vi.spyOn(window, "clearTimeout");
     const { unmount } = renderGameScreen();
 
     unmount();
 
-    expect(clearIntervalSpy).toHaveBeenCalled();
+    expect(clearTimeoutSpy).toHaveBeenCalled();
   });
 });

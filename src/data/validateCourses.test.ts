@@ -72,6 +72,13 @@ describe("validateCourses", () => {
     expect(validateCourses(trains, broken)).toContain("course sora-1 gap sora-1-gap-1 is not on the route");
   });
 
+  it("rejects first gaps that are too close to the start", () => {
+    const broken = cloneCourses();
+    broken[0].gaps[0].position = broken[0].path[1];
+
+    expect(validateCourses(trains, broken)).toContain("course sora-1 first gap is too close to the start");
+  });
+
   it("rejects gaps that are not ordered by arrivalDistance", () => {
     const broken = cloneCourses();
     broken[1].gaps[0].arrivalDistance = 80;

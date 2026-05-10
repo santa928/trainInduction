@@ -66,7 +66,7 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
   const [state, dispatch] = useReducer(gameReducer, course, createGameState);
   const [selectedPieceId, setSelectedPieceId] = useState<string | undefined>();
   const [draggedPieceId, setDraggedPieceId] = useState<string | undefined>();
-  const [restartPaused, setRestartPaused] = useState(false);
+  const [restartPaused, setRestartPaused] = useState(true);
   const clearNotifiedRef = useRef(false);
 
   const piecesById = useMemo(

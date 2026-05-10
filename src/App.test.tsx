@@ -12,6 +12,18 @@ describe("App navigation", () => {
     vi.useRealTimers();
   });
 
+  /**
+   * Advances fake timers in the same two phases the game uses: opening wait, then train travel.
+   */
+  async function advanceAfterStartPause(ms: number): Promise<void> {
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500);
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(ms);
+    });
+  }
+
   it("starts with train selection and opens course selection", async () => {
     render(<App />);
 
@@ -62,9 +74,7 @@ describe("App navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: /よこ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(13000);
-    });
+    await advanceAfterStartPause(16000);
 
     expect(screen.getByRole("heading", { name: "えきについたよ！" })).toBeInTheDocument();
 
@@ -85,9 +95,7 @@ describe("App navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: /よこ/ }));
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(13000);
-    });
+    await advanceAfterStartPause(16000);
 
     fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "つぎへ" }));
 
