@@ -1,45 +1,33 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { CourseSelect } from "./components/CourseSelect";
+import { GameScreen } from "./components/GameScreen";
 import { TrainSelect } from "./components/TrainSelect";
 import { courses } from "./data/courses";
 import { trains } from "./data/trains";
 import type { CourseDefinition, TrainId } from "./data/types";
-import { loadProgress } from "./storage/progressStorage";
+import { loadProgress, saveProgress } from "./storage/progressStorage";
 
 type Screen =
   | { readonly name: "trainSelect" }
   | { readonly name: "courseSelect"; readonly trainId: TrainId }
-  | { readonly name: "game"; readonly course: CourseDefinition };
-
-interface GamePlaceholderProps {
-  readonly course: CourseDefinition;
-}
-
-/**
- * Temporarily renders the selected course until Task 6 replaces it with GameScreen.
- */
-function GamePlaceholder({ course }: GamePlaceholderProps): React.JSX.Element {
-  const headingRef = useRef<HTMLHeadingElement>(null);
-
-  useEffect(() => {
-    headingRef.current?.focus();
-  }, []);
-
-  return (
-    <main className="screen">
-      <h1 ref={headingRef} tabIndex={-1}>
-        {course.title}
-      </h1>
-    </main>
-  );
-}
+  | { readonly name: "game"; readonly trainId: TrainId; readonly course: CourseDefinition };
 
 /**
  * Coordinates top-level game screens and persisted progress.
  */
 export default function App(): React.JSX.Element {
   const [screen, setScreen] = useState<Screen>({ name: "trainSelect" });
-  const [progress] = useState(() => loadProgress());
+  const [progress, setProgress] = useState(() => loadProgress());
+
+  const handleClear = useCallback((course: CourseDefinition): void => {
+    setProgress((currentProgress) => {
+      const clearedCourseIds = new Set(currentProgress.clearedCourseIds);
+      clearedCourseIds.add(course.id);
+      const nextProgress = { clearedCourseIds: [...clearedCourseIds] };
+      saveProgress(nextProgress);
+      return nextProgress;
+    });
+  }, []);
 
   const selectedTrain =
     screen.name === "courseSelect" ? trains.find((train) => train.id === screen.trainId) : undefined;
@@ -60,13 +48,19 @@ export default function App(): React.JSX.Element {
         courses={selectedCourses}
         clearedCourseIds={progress.clearedCourseIds}
         onBack={() => setScreen({ name: "trainSelect" })}
-        onSelectCourse={(course) => setScreen({ name: "game", course })}
+        onSelectCourse={(course) => setScreen({ name: "game", trainId: selectedTrain.id, course })}
       />
     );
   }
 
   if (screen.name === "game") {
-    return <GamePlaceholder course={screen.course} />;
+    return (
+      <GameScreen
+        course={screen.course}
+        onClear={handleClear}
+        onExit={() => setScreen({ name: "courseSelect", trainId: screen.trainId })}
+      />
+    );
   }
 
   return <TrainSelect trains={trains} onSelectTrain={(trainId) => setScreen({ name: "courseSelect", trainId })} />;

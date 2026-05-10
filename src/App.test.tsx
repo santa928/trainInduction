@@ -1,9 +1,17 @@
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
 describe("App navigation", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("starts with train selection and opens course selection", async () => {
     render(<App />);
 
@@ -33,12 +41,36 @@ describe("App navigation", () => {
     expect(screen.getAllByText("つぎのおたのしみ")).toHaveLength(4);
   });
 
-  it("opens the placeholder game screen from an unlocked course", async () => {
+  it("opens the game screen from an unlocked course", async () => {
     render(<App />);
 
     await userEvent.click(screen.getByRole("button", { name: /そらでんしゃ/ }));
     await userEvent.click(screen.getByRole("button", { name: /1ばんめのたび/ }));
 
-    expect(screen.getByRole("heading", { name: "1ばんめのたび" })).toHaveFocus();
+    expect(screen.getByRole("heading", { name: "1ばんめのたび" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /コースをえらぶ/ })).toHaveFocus();
+    expect(screen.getByLabelText("せんろ")).toBeInTheDocument();
+    expect(screen.getByLabelText("レールピース")).toBeInTheDocument();
+  });
+
+  it("saves clear progress and unlocks the next course", async () => {
+    vi.useFakeTimers();
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: /そらでんしゃ/ }));
+    fireEvent.click(screen.getByRole("button", { name: /1ばんめのたび/ }));
+    fireEvent.click(screen.getByRole("button", { name: /まっすぐ/ }));
+    fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5200);
+    });
+
+    expect(screen.getByRole("heading", { name: "えきについたよ！" })).toBeInTheDocument();
+
+    const dialog = screen.getByRole("dialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: /コースをえらぶ/ }));
+
+    expect(screen.getByRole("button", { name: /2ばんめのたび/ })).toBeEnabled();
   });
 });
