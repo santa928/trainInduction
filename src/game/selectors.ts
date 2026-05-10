@@ -7,9 +7,10 @@ import type { GameState } from "./createGameState";
 export function getUnlockedDifficulty(trainId: TrainId, clearedCourseIds: readonly string[]): number {
   let unlocked = 1;
   for (let difficulty = 1; difficulty <= 5; difficulty += 1) {
-    if (clearedCourseIds.includes(`${trainId}-${difficulty}`)) {
-      unlocked = Math.min(5, difficulty + 1);
+    if (!clearedCourseIds.includes(`${trainId}-${difficulty}`)) {
+      break;
     }
+    unlocked = Math.min(5, difficulty + 1);
   }
   return unlocked;
 }

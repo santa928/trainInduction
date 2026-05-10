@@ -17,14 +17,39 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
   switch (action.type) {
     case "placePiece": {
+      const pieceExists = state.course.pieces.some((piece) => piece.id === action.pieceId);
+      const gapExists = state.course.gaps.some((gap) => gap.id === action.gapId);
+      if (!pieceExists || !gapExists) {
+        return state;
+      }
+
       const existingPieceId = state.placements[action.gapId];
-      const trayPieceIds = state.trayPieceIds.filter((id) => id !== action.pieceId);
-      const restoredTray = existingPieceId ? [...trayPieceIds, existingPieceId] : trayPieceIds;
+      if (existingPieceId === action.pieceId) {
+        return state;
+      }
+
+      const sourceGapId = Object.entries(state.placements).find(([, pieceId]) => pieceId === action.pieceId)?.[0];
+      const pieceIsInTray = state.trayPieceIds.includes(action.pieceId);
+      if (!pieceIsInTray && !sourceGapId) {
+        return state;
+      }
+
+      const placements = { ...state.placements };
+      if (sourceGapId) {
+        delete placements[sourceGapId];
+      }
+      placements[action.gapId] = action.pieceId;
+
+      const trayPieceIds = new Set(state.trayPieceIds);
+      trayPieceIds.delete(action.pieceId);
+      if (existingPieceId) {
+        trayPieceIds.add(existingPieceId);
+      }
 
       return {
         ...state,
-        trayPieceIds: restoredTray,
-        placements: { ...state.placements, [action.gapId]: action.pieceId },
+        trayPieceIds: [...trayPieceIds],
+        placements,
       };
     }
 
@@ -43,22 +68,25 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case "advanceTrain": {
       const trainDistance = state.trainDistance + action.deltaDistance;
-      const nextGap = state.course.gaps[state.nextGapIndex];
+      let nextGapIndex = state.nextGapIndex;
 
-      if (nextGap && trainDistance >= nextGap.arrivalDistance) {
+      while (nextGapIndex < state.course.gaps.length) {
+        const nextGap = state.course.gaps[nextGapIndex];
+        if (trainDistance < nextGap.arrivalDistance) {
+          break;
+        }
         const placedPieceId = state.placements[nextGap.id];
         if (placedPieceId !== nextGap.requiredPieceId) {
-          return { ...state, trainDistance, status: "retry" };
+          return { ...state, trainDistance, nextGapIndex, status: "retry" };
         }
-        const nextGapIndex = state.nextGapIndex + 1;
-        const status = nextGapIndex >= state.course.gaps.length && trainDistance >= 100 ? "cleared" : "playing";
-        return { ...state, trainDistance, nextGapIndex, status };
+        nextGapIndex += 1;
       }
 
       return {
         ...state,
         trainDistance,
-        status: state.nextGapIndex >= state.course.gaps.length && trainDistance >= 100 ? "cleared" : "playing",
+        nextGapIndex,
+        status: nextGapIndex >= state.course.gaps.length && trainDistance >= 100 ? "cleared" : "playing",
       };
     }
 
