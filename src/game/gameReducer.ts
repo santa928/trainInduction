@@ -58,7 +58,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state,
         trainDistance,
-        status: trainDistance >= 100 ? "cleared" : "playing",
+        status: state.nextGapIndex >= state.course.gaps.length && trainDistance >= 100 ? "cleared" : "playing",
       };
     }
 

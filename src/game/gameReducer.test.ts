@@ -52,4 +52,20 @@ describe("gameReducer", () => {
 
     expect(next.status).toBe("cleared");
   });
+
+  it("keeps playing when the train reaches the goal but a gap remains unvisited", () => {
+    const lateGapCourse = {
+      ...course,
+      gaps: [{ ...course.gaps[0], arrivalDistance: 120 }, ...course.gaps.slice(1)],
+    };
+    const placed = gameReducer(createGameState(lateGapCourse), {
+      type: "placePiece",
+      pieceId: lateGapCourse.gaps[0].requiredPieceId,
+      gapId: lateGapCourse.gaps[0].id,
+    });
+
+    const next = gameReducer(placed, { type: "advanceTrain", deltaDistance: 100 });
+
+    expect(next.status).toBe("playing");
+  });
 });
