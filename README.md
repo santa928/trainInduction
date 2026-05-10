@@ -16,7 +16,7 @@
 ホスト環境を汚さないため、Node.js の実行は Docker コンテナ内で行います。`npm`、`npx`、`pnpm`、`yarn` はホストで実行しないでください。
 
 ```bash
-docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app node:22-bookworm npm install
+docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app node:22-bookworm npm ci
 docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app -p 5173:5173 node:22-bookworm npm run dev
 ```
 
@@ -50,4 +50,4 @@ Playwright の Docker image は、`package-lock.json` で解決されている `
 docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app node:22-bookworm npm run build
 ```
 
-ビルド成果物は `dist/` に出力されます。
+ビルド成果物は `dist/` に出力されます。GitHub Pages では、この `dist/` の中身を配布物として公開します。
