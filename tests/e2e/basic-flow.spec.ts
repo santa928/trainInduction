@@ -42,6 +42,8 @@ test("player can open first train and first course", async ({ page }) => {
     }),
   );
 
+  expect(gapBoxes.length, "course should render at least one gap slot").toBeGreaterThan(0);
+
   for (let index = 0; index < gapBoxes.length; index += 1) {
     for (let nextIndex = index + 1; nextIndex < gapBoxes.length; nextIndex += 1) {
       expect(
