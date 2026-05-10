@@ -37,6 +37,9 @@ export default function App(): React.JSX.Element {
     [selectedTrain],
   );
 
+  const findNextCourse = (course: CourseDefinition): CourseDefinition | undefined =>
+    courses.find((candidate) => candidate.trainId === course.trainId && candidate.difficulty === course.difficulty + 1);
+
   if (screen.name === "trainSelect") {
     return <TrainSelect trains={trains} onSelectTrain={(trainId) => setScreen({ name: "courseSelect", trainId })} />;
   }
@@ -54,11 +57,14 @@ export default function App(): React.JSX.Element {
   }
 
   if (screen.name === "game") {
+    const nextCourse = findNextCourse(screen.course);
     return (
       <GameScreen
         course={screen.course}
         onClear={handleClear}
         onExit={() => setScreen({ name: "courseSelect", trainId: screen.trainId })}
+        onTrainSelect={() => setScreen({ name: "trainSelect" })}
+        onNext={nextCourse ? () => setScreen({ name: "game", trainId: screen.trainId, course: nextCourse }) : undefined}
       />
     );
   }

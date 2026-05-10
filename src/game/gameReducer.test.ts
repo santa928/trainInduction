@@ -157,6 +157,40 @@ describe("gameReducer", () => {
     expect(next.nextGapIndex).toBe(1);
   });
 
+  it("retries checkpoint courses from before the failed gap while keeping earlier correct placements", () => {
+    const withFirstPiece = gameReducer(createGameState(multiGapCourse), {
+      type: "placePiece",
+      pieceId: multiGapCourse.gaps[0].requiredPieceId,
+      gapId: multiGapCourse.gaps[0].id,
+    });
+    const failed = gameReducer(withFirstPiece, {
+      type: "advanceTrain",
+      deltaDistance: multiGapCourse.gaps[1].arrivalDistance,
+    });
+
+    const retried = gameReducer(failed, { type: "retry" });
+
+    expect(retried.status).toBe("playing");
+    expect(retried.nextGapIndex).toBe(1);
+    expect(retried.trainDistance).toBeLessThan(multiGapCourse.gaps[1].arrivalDistance);
+    expect(retried.trainDistance).toBeGreaterThan(multiGapCourse.gaps[0].arrivalDistance);
+    expect(retried.placements[multiGapCourse.gaps[0].id]).toBe(multiGapCourse.gaps[0].requiredPieceId);
+    expect(retried.placements[multiGapCourse.gaps[1].id]).toBeUndefined();
+    expect(retried.trayPieceIds).toContain(multiGapCourse.gaps[1].requiredPieceId);
+  });
+
+  it("retries course-start courses from the beginning", () => {
+    const courseStartCourse = courses[2];
+    const failed = gameReducer(createGameState(courseStartCourse), {
+      type: "advanceTrain",
+      deltaDistance: courseStartCourse.gaps[0].arrivalDistance,
+    });
+
+    const retried = gameReducer(failed, { type: "retry" });
+
+    expect(retried).toEqual(createGameState(courseStartCourse));
+  });
+
   it("keeps playing when the train reaches the goal but a gap remains unvisited", () => {
     const lateGapCourse = {
       ...course,

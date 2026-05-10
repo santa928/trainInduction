@@ -43,7 +43,7 @@ const makeCourse = (
       id: `${id}-gap-${index + 1}`,
       position: { x: 24 + index * 16, y: index % 2 === 0 ? 50 : 42 },
       requiredPieceId: pieces[index % pieces.length].id,
-      arrivalDistance: 20 + index * 20,
+      arrivalDistance: 32 + index * 18,
     }),
   );
 
@@ -53,7 +53,7 @@ const makeCourse = (
     title: `${difficulty}ばんめのたび`,
     difficulty,
     background,
-    trainSpeed: 0.018 + difficulty * 0.004,
+    trainSpeed: 0.006 + difficulty * 0.002,
     retryMode: retryMode(difficulty),
     path,
     pieces,

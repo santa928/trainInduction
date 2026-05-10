@@ -9,6 +9,8 @@ interface GameScreenProps {
   readonly course: CourseDefinition;
   readonly onClear: (course: CourseDefinition) => void;
   readonly onExit: () => void;
+  readonly onTrainSelect: () => void;
+  readonly onNext?: () => void;
 }
 
 interface GapSlotLayout {
@@ -37,9 +39,10 @@ export function createGapSlotLayouts(gaps: readonly GapDefinition[]): readonly G
 /**
  * Renders the main rail board, tray selection, and train progression loop.
  */
-export function GameScreen({ course, onClear, onExit }: GameScreenProps): React.JSX.Element {
+export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: GameScreenProps): React.JSX.Element {
   const [state, dispatch] = useReducer(gameReducer, course, createGameState);
   const [selectedPieceId, setSelectedPieceId] = useState<string | undefined>();
+  const [draggedPieceId, setDraggedPieceId] = useState<string | undefined>();
   const clearNotifiedRef = useRef(false);
 
   const piecesById = useMemo(
@@ -82,9 +85,19 @@ export function GameScreen({ course, onClear, onExit }: GameScreenProps): React.
     dispatch({ type: "returnPiece", gapId });
   };
 
+  const handleGapDrop = (gapId: string): void => {
+    if (!draggedPieceId) {
+      return;
+    }
+    dispatch({ type: "placePiece", pieceId: draggedPieceId, gapId });
+    setDraggedPieceId(undefined);
+    setSelectedPieceId(undefined);
+  };
+
   const handleRetry = (): void => {
     clearNotifiedRef.current = false;
     setSelectedPieceId(undefined);
+    setDraggedPieceId(undefined);
     dispatch({ type: "retry" });
   };
 
@@ -112,6 +125,8 @@ export function GameScreen({ course, onClear, onExit }: GameScreenProps): React.
               style={{ left: `${layout.leftPercent}%`, top: `${layout.topPercent}%` }}
               aria-label={`あな ${index + 1}${placedPiece ? ` ${placedPiece.label}` : ""}`}
               onClick={() => handleGapClick(gap.id)}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={() => handleGapDrop(gap.id)}
             >
               {placedPiece ? (
                 <>
@@ -137,7 +152,10 @@ export function GameScreen({ course, onClear, onExit }: GameScreenProps): React.
               key={piece.id}
               className={`piece-button${selectedPieceId === piece.id ? " selected" : ""}`}
               aria-pressed={selectedPieceId === piece.id}
+              draggable
               onClick={() => handleSelectPiece(piece.id)}
+              onDragStart={() => setDraggedPieceId(piece.id)}
+              onDragEnd={() => setDraggedPieceId(undefined)}
             >
               <RailPiece shape={piece.shape} />
               <span>{piece.label}</span>
@@ -147,7 +165,14 @@ export function GameScreen({ course, onClear, onExit }: GameScreenProps): React.
       </section>
 
       {state.status === "retry" || state.status === "cleared" ? (
-        <ResultOverlay status={state.status} retryMode={course.retryMode} onRetry={handleRetry} onExit={onExit} />
+        <ResultOverlay
+          status={state.status}
+          retryMode={course.retryMode}
+          onRetry={handleRetry}
+          onExit={onExit}
+          onTrainSelect={onTrainSelect}
+          onNext={state.status === "cleared" ? onNext : undefined}
+        />
       ) : null}
     </main>
   );

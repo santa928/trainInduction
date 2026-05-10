@@ -8,14 +8,23 @@ interface ResultOverlayProps {
   readonly retryMode: RetryMode;
   readonly onRetry: () => void;
   readonly onExit: () => void;
+  readonly onTrainSelect: () => void;
+  readonly onNext?: () => void;
 }
 
 /**
  * Shows a large modal result prompt after a train stops or clears a course.
  */
-export function ResultOverlay({ status, retryMode, onRetry, onExit }: ResultOverlayProps): React.JSX.Element {
+export function ResultOverlay({
+  status,
+  retryMode,
+  onRetry,
+  onExit,
+  onTrainSelect,
+  onNext,
+}: ResultOverlayProps): React.JSX.Element {
+  const panelRef = useRef<HTMLDivElement>(null);
   const retryButtonRef = useRef<HTMLButtonElement>(null);
-  const exitButtonRef = useRef<HTMLButtonElement>(null);
   const isCleared = status === "cleared";
   const message = isCleared
     ? "えきについたよ！"
@@ -33,18 +42,22 @@ export function ResultOverlay({ status, retryMode, onRetry, onExit }: ResultOver
     }
 
     event.preventDefault();
-    const firstButton = retryButtonRef.current;
-    const lastButton = exitButtonRef.current;
+    const buttons = Array.from(panelRef.current?.querySelectorAll<HTMLButtonElement>("button:not(:disabled)") ?? []);
+    const firstButton = buttons[0];
+    const lastButton = buttons[buttons.length - 1];
     if (!firstButton || !lastButton) {
       return;
     }
 
     const activeElement = document.activeElement;
+    const activeIndex = buttons.findIndex((button) => button === activeElement);
     if (event.shiftKey) {
-      (activeElement === firstButton ? lastButton : firstButton).focus();
+      const previousIndex = activeIndex <= 0 ? buttons.length - 1 : activeIndex - 1;
+      buttons[previousIndex].focus();
       return;
     }
-    (activeElement === lastButton ? firstButton : lastButton).focus();
+    const nextIndex = activeIndex === -1 || activeElement === lastButton ? 0 : activeIndex + 1;
+    buttons[nextIndex].focus();
   };
 
   return (
@@ -55,14 +68,22 @@ export function ResultOverlay({ status, retryMode, onRetry, onExit }: ResultOver
       aria-labelledby="result-title"
       onKeyDown={handleKeyDown}
     >
-      <div className="result-panel">
+      <div ref={panelRef} className="result-panel">
         <h2 id="result-title">{message}</h2>
         <div className="result-actions">
           <button ref={retryButtonRef} className="result-button result-button-primary" onClick={onRetry}>
             もういちど
           </button>
-          <button ref={exitButtonRef} className="result-button" onClick={onExit}>
+          {isCleared && onNext ? (
+            <button className="result-button result-button-next" onClick={onNext}>
+              つぎへ
+            </button>
+          ) : null}
+          <button className="result-button" onClick={onExit}>
             コースをえらぶ
+          </button>
+          <button className="result-button" onClick={onTrainSelect}>
+            でんしゃをえらぶ
           </button>
         </div>
       </div>

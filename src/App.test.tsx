@@ -63,14 +63,34 @@ describe("App navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(5200);
+      await vi.advanceTimersByTimeAsync(13000);
     });
 
     expect(screen.getByRole("heading", { name: "えきについたよ！" })).toBeInTheDocument();
 
     const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByRole("button", { name: "つぎへ" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("button", { name: "でんしゃをえらぶ" })).toBeInTheDocument();
     fireEvent.click(within(dialog).getByRole("button", { name: /コースをえらぶ/ }));
 
     expect(screen.getByRole("button", { name: /2ばんめのたび/ })).toBeEnabled();
+  });
+
+  it("opens the next course from the clear overlay", async () => {
+    vi.useFakeTimers();
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: /そらでんしゃ/ }));
+    fireEvent.click(screen.getByRole("button", { name: /1ばんめのたび/ }));
+    fireEvent.click(screen.getByRole("button", { name: /まっすぐ/ }));
+    fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(13000);
+    });
+
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "つぎへ" }));
+
+    expect(screen.getByRole("heading", { name: "2ばんめのたび" })).toBeInTheDocument();
   });
 });

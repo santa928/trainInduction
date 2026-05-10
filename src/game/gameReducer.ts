@@ -8,6 +8,36 @@ export type GameAction =
   | { readonly type: "retry" };
 
 /**
+ * Rewinds a checkpoint course to just before the failed gap while keeping earlier correct work.
+ */
+function createCheckpointRetryState(state: GameState): GameState {
+  const failedGap = state.course.gaps[state.nextGapIndex];
+  if (!failedGap) {
+    return createGameState(state.course);
+  }
+
+  const previousGap = state.course.gaps[state.nextGapIndex - 1];
+  const checkpointDistance = Math.max(
+    previousGap ? previousGap.arrivalDistance + 1 : 0,
+    failedGap.arrivalDistance - 12,
+  );
+  const failedPieceId = state.placements[failedGap.id];
+  const { [failedGap.id]: _removed, ...placements } = state.placements;
+  const trayPieceIds =
+    failedPieceId && !state.trayPieceIds.includes(failedPieceId)
+      ? [...state.trayPieceIds, failedPieceId]
+      : state.trayPieceIds;
+
+  return {
+    ...state,
+    trainDistance: checkpointDistance,
+    trayPieceIds,
+    placements,
+    status: "playing",
+  };
+}
+
+/**
  * Applies a single game action and returns a new immutable state.
  */
 export function gameReducer(state: GameState, action: GameAction): GameState {
@@ -91,6 +121,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case "retry":
+      if (state.status === "retry" && state.course.retryMode === "checkpoint") {
+        return createCheckpointRetryState(state);
+      }
       return createGameState(state.course);
   }
 }

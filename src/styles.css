@@ -312,6 +312,10 @@ button {
   background: #ffe36e;
 }
 
+.result-button-next {
+  background: #bff0c8;
+}
+
 @media (max-width: 640px) {
   .game-screen {
     padding: 10px;
