@@ -21,7 +21,7 @@ export function CourseSelect({
 }: CourseSelectProps): React.JSX.Element {
   return (
     <section className="screen">
-      <button className="text-button" onClick={onBack}>
+      <button autoFocus className="text-button" onClick={onBack}>
         でんしゃをえらぶ
       </button>
       <h1>{train.name}</h1>

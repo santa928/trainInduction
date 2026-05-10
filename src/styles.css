@@ -18,16 +18,9 @@ button {
   font: inherit;
 }
 
-.app-shell {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  text-align: center;
-}
-
 .screen {
   min-height: 100vh;
+  min-height: 100dvh;
   padding: 20px;
   display: flex;
   flex-direction: column;

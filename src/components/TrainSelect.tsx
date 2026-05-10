@@ -14,8 +14,9 @@ export function TrainSelect({ trains, onSelectTrain }: TrainSelectProps): React.
     <section className="screen">
       <h1>レールをつなごう！</h1>
       <div className="card-grid" aria-label="でんしゃをえらぶ">
-        {trains.map((train) => (
+        {trains.map((train, index) => (
           <button
+            autoFocus={index === 0}
             className="train-card"
             key={train.id}
             style={{ "--train-color": train.color, "--train-accent": train.accentColor } as CSSProperties}
