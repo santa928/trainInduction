@@ -12,12 +12,12 @@ function createEmptyProgress(): ProgressState {
  * Loads validated progress from localStorage and ignores corrupt values.
  */
 export function loadProgress(): ProgressState {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return createEmptyProgress();
-  }
-
   try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return createEmptyProgress();
+    }
+
     const parsed = JSON.parse(raw) as Partial<ProgressState>;
     if (!Array.isArray(parsed.clearedCourseIds)) {
       return createEmptyProgress();

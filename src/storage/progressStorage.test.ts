@@ -43,6 +43,16 @@ describe("progressStorage", () => {
     expect(loadProgress()).toEqual({ clearedCourseIds: ["sora-1", "mori-2"] });
   });
 
+  it("falls back to empty progress when localStorage getItem fails", () => {
+    const getItemSpy = vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new DOMException("blocked", "SecurityError");
+    });
+
+    expect(loadProgress()).toEqual({ clearedCourseIds: [] });
+
+    getItemSpy.mockRestore();
+  });
+
   it("does not throw when localStorage setItem fails", () => {
     const setItemSpy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new DOMException("Quota exceeded", "QuotaExceededError");
