@@ -32,13 +32,22 @@ export function RailPiece({ shape, direction }: RailPieceProps): React.JSX.Eleme
       <g transform={`rotate(${rotation} 48 48)`}>
         {isCurve ? (
           <>
-            <path className="rail-piece__tie" d="M48 14 Q48 48 82 48" />
+            <path className="rail-piece__sleeper" d="M33 18 L63 18" />
+            <path className="rail-piece__sleeper" d="M29 34 L64 38" />
+            <path className="rail-piece__sleeper" d="M36 54 L68 66" />
+            <path className="rail-piece__sleeper" d="M54 68 L84 68" />
             <path className="rail-piece__track" d="M36 14 Q36 60 82 60" />
+            <path className="rail-piece__track" d="M58 14 Q58 38 82 38" />
           </>
         ) : (
           <>
-            <path className="rail-piece__tie" d="M18 39 H78" />
-            <path className="rail-piece__track" d="M18 57 H78" />
+            <path className="rail-piece__sleeper" d="M22 24 V72" />
+            <path className="rail-piece__sleeper" d="M36 24 V72" />
+            <path className="rail-piece__sleeper" d="M50 24 V72" />
+            <path className="rail-piece__sleeper" d="M64 24 V72" />
+            <path className="rail-piece__sleeper" d="M78 24 V72" />
+            <path className="rail-piece__track" d="M14 36 H82" />
+            <path className="rail-piece__track" d="M14 60 H82" />
           </>
         )}
         {isBridge ? <path className="rail-piece__bridge" d="M22 68 L36 32 L50 68 L64 32 L78 68" /> : null}

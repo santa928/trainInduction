@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import type { CourseDefinition, RailPoint } from "../data/types";
+import { getPathTile } from "../data/courses";
 import { createGameState } from "../game/createGameState";
 import { gameReducer } from "../game/gameReducer";
 import { RailPiece } from "./RailPiece";
@@ -48,6 +50,15 @@ export function getRoutePoint(path: readonly RailPoint[], distancePercent: numbe
   return path[path.length - 1];
 }
 
+const cellKey = (point: RailPoint): string => `${point.x}:${point.y}`;
+
+const cellToPercent = (point: RailPoint, course: CourseDefinition): RailPoint => ({
+  x: ((point.x - 0.5) / course.grid.columns) * 100,
+  y: ((point.y - 0.5) / course.grid.rows) * 100,
+});
+
+const range = (size: number): readonly number[] => Array.from({ length: size }, (_, index) => index + 1);
+
 /**
  * Renders the main rail board, tray selection, and train progression loop.
  */
@@ -55,17 +66,24 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
   const [state, dispatch] = useReducer(gameReducer, course, createGameState);
   const [selectedPieceId, setSelectedPieceId] = useState<string | undefined>();
   const [draggedPieceId, setDraggedPieceId] = useState<string | undefined>();
+  const [restartPaused, setRestartPaused] = useState(false);
   const clearNotifiedRef = useRef(false);
 
   const piecesById = useMemo(
     () => new Map(course.pieces.map((piece) => [piece.id, piece] as const)),
     [course.pieces],
   );
-  const routePoints = useMemo(() => course.path.map((point) => `${point.x},${point.y}`).join(" "), [course.path]);
-  const trainPosition = getRoutePoint(course.path, state.trainDistance);
+  const gapByCell = useMemo(() => new Map(course.gaps.map((gap, index) => [cellKey(gap.position), { gap, index }])), [course.gaps]);
+  const routeTileByCell = useMemo(
+    () => new Map(course.path.map((point, index) => [cellKey(point), getPathTile(course, index)] as const)),
+    [course],
+  );
+  const startCell = course.path[0];
+  const goalCell = course.path[course.path.length - 1];
+  const trainPosition = cellToPercent(getRoutePoint(course.path, state.trainDistance), course);
 
   useEffect(() => {
-    if (state.status !== "playing") {
+    if (state.status !== "playing" || restartPaused) {
       return undefined;
     }
 
@@ -74,7 +92,16 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
     }, 100);
 
     return () => window.clearInterval(intervalId);
-  }, [course.trainSpeed, state.status]);
+  }, [course.trainSpeed, restartPaused, state.status]);
+
+  useEffect(() => {
+    if (!restartPaused) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => setRestartPaused(false), 1500);
+    return () => window.clearTimeout(timeoutId);
+  }, [restartPaused]);
 
   useEffect(() => {
     if (state.status !== "cleared" || clearNotifiedRef.current) {
@@ -110,6 +137,7 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
     clearNotifiedRef.current = false;
     setSelectedPieceId(undefined);
     setDraggedPieceId(undefined);
+    setRestartPaused(true);
     dispatch({ type: "retry" });
   };
 
@@ -122,17 +150,33 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
         <h1>{course.title}</h1>
       </header>
 
-      <section className={`track-board track-board-${course.background}`} aria-label="せんろ">
-        <svg className="track-map" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <polyline className="track-route track-route-shadow" points={routePoints} />
-          <polyline className="track-route track-route-base" points={routePoints} />
-          <polyline className="track-route track-route-rail" points={routePoints} />
-        </svg>
-        <div className="station-token station-token-start" aria-hidden="true">
-          はじまり
-        </div>
-        <div className="station-token station-token-goal" aria-hidden="true">
-          ゴール
+      <section
+        className={`track-board track-board-${course.background}`}
+        style={{ "--columns": course.grid.columns, "--rows": course.grid.rows } as CSSProperties}
+        aria-label="せんろ"
+      >
+        <div className="track-grid" aria-hidden="true">
+          {range(course.grid.rows).flatMap((row) =>
+            range(course.grid.columns).map((column) => {
+              const point = { x: column, y: row };
+              const key = cellKey(point);
+              const routeTile = routeTileByCell.get(key);
+              const gapInfo = gapByCell.get(key);
+              const isStart = startCell && cellKey(startCell) === key;
+              const isGoal = goalCell && cellKey(goalCell) === key;
+              return (
+                <div
+                  key={key}
+                  className={`track-cell${routeTile ? " track-cell-route" : ""}${gapInfo ? " track-cell-gap" : ""}`}
+                  style={{ gridColumn: column, gridRow: row }}
+                >
+                  {routeTile && !gapInfo ? <RailPiece shape={routeTile.shape} direction={routeTile.direction} /> : null}
+                  {isStart ? <span className="station-badge">はじまり</span> : null}
+                  {isGoal ? <span className="station-badge">ゴール</span> : null}
+                </div>
+              );
+            }),
+          )}
         </div>
         <div
           className="train-token"
@@ -147,7 +191,7 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
             <button
               key={gap.id}
               className="gap-slot"
-              style={{ left: `${gap.position.x}%`, top: `${gap.position.y}%` }}
+              style={{ gridColumn: gap.position.x, gridRow: gap.position.y }}
               aria-label={`あな ${index + 1}${placedPiece ? ` ${placedPiece.label}` : ""}`}
               onClick={() => handleGapClick(gap.id)}
               onDragOver={(event) => event.preventDefault()}

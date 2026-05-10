@@ -5,11 +5,14 @@ import { courses } from "../data/courses";
 import { GameScreen, getRoutePoint } from "./GameScreen";
 
 const mobileBoard = { width: 355, height: 557 };
-const gapSlot = { width: 82, height: 82 };
 
-function toRect(position: { readonly x: number; readonly y: number }): DOMRectReadOnly {
-  const centerX = (position.x / 100) * mobileBoard.width;
-  const centerY = (position.y / 100) * mobileBoard.height;
+function toRect(course: typeof courses[number], position: { readonly x: number; readonly y: number }): DOMRectReadOnly {
+  const cellWidth = mobileBoard.width / course.grid.columns;
+  const cellHeight = mobileBoard.height / course.grid.rows;
+  const centerX = ((position.x - 0.5) / course.grid.columns) * mobileBoard.width;
+  const centerY = ((position.y - 0.5) / course.grid.rows) * mobileBoard.height;
+  const size = Math.min(cellWidth, cellHeight);
+  const gapSlot = { width: size, height: size };
   return new DOMRectReadOnly(centerX - gapSlot.width / 2, centerY - gapSlot.height / 2, gapSlot.width, gapSlot.height);
 }
 
@@ -66,7 +69,7 @@ describe("GameScreen", () => {
 
   it("keeps difficulty 4 and 5 gap slots from overlapping on a 375px mobile board", () => {
     for (const course of [courses[3], courses[4]]) {
-      const rects = course.gaps.map((gap) => toRect(gap.position));
+      const rects = course.gaps.map((gap) => toRect(course, gap.position));
 
       for (const [index, rect] of rects.entries()) {
         for (const nextRect of rects.slice(index + 1)) {
@@ -79,8 +82,8 @@ describe("GameScreen", () => {
   it("places the train on the top-down route", () => {
     const point = getRoutePoint(courses[1].path, courses[1].gaps[0].arrivalDistance);
 
-    expect(point.x).toBeGreaterThan(20);
-    expect(point.y).toBeGreaterThan(45);
+    expect(point.x).toBeGreaterThan(1);
+    expect(point.y).toBeGreaterThan(3);
   });
 
   it("calls onClear only once for the same clear state", async () => {
@@ -109,7 +112,7 @@ describe("GameScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(4500);
+      await vi.advanceTimersByTimeAsync(8000);
     });
 
     const dialog = screen.getByRole("dialog");
@@ -118,6 +121,12 @@ describe("GameScreen", () => {
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "あな 1" })).toBeInTheDocument();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("focuses and traps tab inside the result overlay", async () => {
@@ -128,7 +137,7 @@ describe("GameScreen", () => {
     fireEvent.click(screen.getByRole("button", { name: /あな 1/ }));
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(4500);
+      await vi.advanceTimersByTimeAsync(8000);
     });
 
     const dialog = screen.getByRole("dialog");

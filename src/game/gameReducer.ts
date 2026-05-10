@@ -19,7 +19,7 @@ function createCheckpointRetryState(state: GameState): GameState {
   const previousGap = state.course.gaps[state.nextGapIndex - 1];
   const checkpointDistance = Math.max(
     previousGap ? previousGap.arrivalDistance + 1 : 0,
-    failedGap.arrivalDistance - 12,
+    failedGap.arrivalDistance - 25,
   );
   const failedPieceId = state.placements[failedGap.id];
   const { [failedGap.id]: _removed, ...placements } = state.placements;

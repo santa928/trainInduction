@@ -116,7 +116,12 @@ button {
 
 .track-board {
   position: relative;
-  min-height: 360px;
+  min-height: clamp(340px, 68vw, 640px);
+  padding: clamp(12px, 3vw, 22px);
+  display: grid;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
+  gap: clamp(6px, 1.5vw, 10px);
   border-radius: 24px;
   overflow: hidden;
   border: 6px solid #fff;
@@ -143,90 +148,75 @@ button {
   background: linear-gradient(#42537f 0 58%, #6cb17b 58%);
 }
 
-.track-map {
+.track-grid {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  inset: clamp(12px, 3vw, 22px);
+  display: grid;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
+  gap: clamp(6px, 1.5vw, 10px);
+  z-index: 1;
+  pointer-events: none;
 }
 
-.track-route {
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.track-route-shadow {
-  stroke: #6c513d;
-  stroke-width: 28;
-  opacity: 0.45;
-  transform: translateY(5px);
-}
-
-.track-route-base {
-  stroke: #f7d68a;
-  stroke-width: 24;
-}
-
-.track-route-rail {
-  stroke: #5b4032;
-  stroke-width: 10;
-  stroke-dasharray: 18 10;
-}
-
-.station-token {
-  position: absolute;
-  min-width: 82px;
-  padding: 8px 10px;
-  border: 4px solid #fff;
+.track-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
   border-radius: 18px;
+  background: rgb(255 255 255 / 18%);
+}
+
+.track-cell-route {
+  background: rgb(255 253 242 / 36%);
+  box-shadow: inset 0 -4px 0 rgb(92 65 45 / 18%);
+}
+
+.station-badge {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  transform: translateX(-50%);
+  padding: 3px 6px;
+  border-radius: 999px;
   background: #fffdf2;
   color: #345;
-  font-size: 0.95rem;
+  font-size: clamp(0.58rem, 2.2vw, 0.85rem);
   font-weight: 900;
-  text-align: center;
-  box-shadow: 0 5px 0 rgb(108 81 61 / 22%);
-  z-index: 1;
-}
-
-.station-token-start {
-  left: 4%;
-  top: 10%;
-}
-
-.station-token-goal {
-  right: 4%;
-  top: 10%;
+  white-space: nowrap;
+  box-shadow: 0 3px 0 rgb(108 81 61 / 18%);
 }
 
 .train-token {
   position: absolute;
-  width: 72px;
-  height: 72px;
+  width: clamp(46px, 11vw, 72px);
+  height: clamp(46px, 11vw, 72px);
   display: grid;
   place-items: center;
   transform: translate(-50%, -50%);
-  border-radius: 22px;
+  border-radius: 18px;
   background: #fffdf2;
-  border: 5px solid #ffbf47;
-  font-size: 2.35rem;
+  border: 4px solid #ffbf47;
+  font-size: clamp(1.55rem, 6vw, 2.35rem);
   pointer-events: none;
-  transition: left 90ms linear;
-  z-index: 1;
+  transition:
+    left 90ms linear,
+    top 90ms linear;
+  z-index: 4;
 }
 
 .gap-slot {
-  position: absolute;
-  width: clamp(82px, 18vw, 118px);
-  min-height: clamp(82px, 18vw, 118px);
-  padding: 8px;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  padding: 4px;
   display: grid;
   place-items: center;
-  gap: 4px;
-  transform: translate(-50%, -50%);
-  border: 5px dashed #8b6a42;
-  border-radius: 22px;
+  gap: 2px;
+  border: 4px dashed #8b6a42;
+  border-radius: 18px;
   background:
     radial-gradient(circle at center, rgb(255 255 255 / 96%) 0 58%, rgb(255 240 190 / 96%) 60%),
     #fffdf4;
@@ -235,7 +225,7 @@ button {
   font-weight: 900;
   line-height: 1.1;
   overflow: hidden;
-  z-index: 2;
+  z-index: 3;
 }
 
 .gap-slot span,
@@ -291,17 +281,17 @@ button {
   fill: #f7d68a;
 }
 
-.rail-piece__tie {
+.rail-piece__sleeper {
   fill: none;
   stroke: #855c3a;
-  stroke-width: 16;
+  stroke-width: 9;
   stroke-linecap: round;
 }
 
 .rail-piece__track {
   fill: none;
-  stroke: #5b4032;
-  stroke-width: 8;
+  stroke: #4f392f;
+  stroke-width: 7;
   stroke-linecap: round;
 }
 

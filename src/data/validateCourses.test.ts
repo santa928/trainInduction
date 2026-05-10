@@ -42,6 +42,36 @@ describe("validateCourses", () => {
     expect(validateCourses(trains, broken)).toContain("course sora-1 has duplicate-looking piece straight:east");
   });
 
+  it("rejects using one piece as the answer for multiple gaps", () => {
+    const broken = cloneCourses();
+    broken[1].gaps[1].requiredPieceId = broken[1].gaps[0].requiredPieceId;
+
+    expect(validateCourses(trains, broken)).toContain(
+      `course sora-2 uses piece ${broken[1].gaps[0].requiredPieceId} for multiple gaps`,
+    );
+  });
+
+  it("rejects route points outside the grid", () => {
+    const broken = cloneCourses();
+    broken[0].path[0].x = 99;
+
+    expect(validateCourses(trains, broken)).toContain("course sora-1 path point 1 is outside the grid");
+  });
+
+  it("rejects non-adjacent route points", () => {
+    const broken = cloneCourses();
+    broken[0].path[1].x = 5;
+
+    expect(validateCourses(trains, broken)).toContain("course sora-1 path point 1 is not adjacent to the next point");
+  });
+
+  it("rejects gaps that are not on the route", () => {
+    const broken = cloneCourses();
+    broken[0].gaps[0].position = { x: 1, y: 1 };
+
+    expect(validateCourses(trains, broken)).toContain("course sora-1 gap sora-1-gap-1 is not on the route");
+  });
+
   it("rejects gaps that are not ordered by arrivalDistance", () => {
     const broken = cloneCourses();
     broken[1].gaps[0].arrivalDistance = 80;

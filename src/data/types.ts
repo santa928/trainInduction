@@ -26,6 +26,11 @@ export interface RailPoint {
   readonly y: number;
 }
 
+export interface RailGrid {
+  readonly columns: number;
+  readonly rows: number;
+}
+
 export interface PieceDefinition {
   readonly id: string;
   readonly shape: RailShape;
@@ -46,6 +51,7 @@ export interface CourseDefinition {
   readonly title: string;
   readonly difficulty: Difficulty;
   readonly background: "sky" | "forest" | "rainbow" | "river" | "night";
+  readonly grid: RailGrid;
   readonly trainSpeed: number;
   readonly retryMode: RetryMode;
   readonly path: readonly RailPoint[];

@@ -55,6 +55,33 @@ export function validateCourses(
       }
     }
 
+    const pathCells = new Set<string>();
+    for (const [index, point] of course.path.entries()) {
+      if (point.x < 1 || point.x > course.grid.columns || point.y < 1 || point.y > course.grid.rows) {
+        errors.push(`course ${course.id} path point ${index + 1} is outside the grid`);
+      }
+      pathCells.add(`${point.x}:${point.y}`);
+
+      const nextPoint = course.path[index + 1];
+      if (nextPoint && Math.abs(nextPoint.x - point.x) + Math.abs(nextPoint.y - point.y) !== 1) {
+        errors.push(`course ${course.id} path point ${index + 1} is not adjacent to the next point`);
+      }
+    }
+
+    for (const gap of course.gaps) {
+      if (!pathCells.has(`${gap.position.x}:${gap.position.y}`)) {
+        errors.push(`course ${course.id} gap ${gap.id} is not on the route`);
+      }
+    }
+
+    const requiredPieceIds = new Set<string>();
+    for (const gap of course.gaps) {
+      if (requiredPieceIds.has(gap.requiredPieceId)) {
+        errors.push(`course ${course.id} uses piece ${gap.requiredPieceId} for multiple gaps`);
+      }
+      requiredPieceIds.add(gap.requiredPieceId);
+    }
+
     const sorted = [...course.gaps].sort((a, b) => a.arrivalDistance - b.arrivalDistance);
     if (sorted.some((gap, index) => gap.id !== course.gaps[index]?.id)) {
       errors.push(`course ${course.id} gaps must be ordered by arrivalDistance`);
