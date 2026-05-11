@@ -57,9 +57,30 @@ button {
   font-weight: 800;
 }
 
-.train-emoji {
+.train-card-sprite {
   display: block;
-  font-size: 4rem;
+  width: min(100%, 170px);
+  height: 88px;
+  margin-inline: auto;
+  filter: drop-shadow(0 7px 0 rgb(74 54 38 / 16%));
+}
+
+.train-art {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.train-art-sora {
+  background-image: url("./assets/train-sora.png");
+}
+
+.train-art-mori {
+  background-image: url("./assets/train-mori.png");
+}
+
+.train-art-niji {
+  background-image: url("./assets/train-niji.png");
 }
 
 .course-button {
@@ -194,20 +215,26 @@ button {
 
 .train-token {
   position: absolute;
-  width: clamp(46px, 11vw, 72px);
-  height: clamp(46px, 11vw, 72px);
+  width: clamp(58px, 13vw, 92px);
+  height: clamp(42px, 9vw, 64px);
   display: grid;
   place-items: center;
   transform: translate(-50%, -50%);
-  border-radius: 18px;
+  border-radius: 20px;
   background: #fffdf2;
   border: 4px solid #ffbf47;
-  font-size: clamp(1.55rem, 6vw, 2.35rem);
   pointer-events: none;
   transition:
     left 90ms linear,
     top 90ms linear;
   z-index: 4;
+}
+
+.train-token-sprite {
+  width: 106%;
+  height: 92%;
+  display: block;
+  filter: drop-shadow(0 4px 0 rgb(74 54 38 / 16%));
 }
 
 .gap-slot {
@@ -281,20 +308,20 @@ button {
 }
 
 .rail-piece__base {
-  fill: #f7d68a;
+  fill: #f8d98f;
 }
 
 .rail-piece__sleeper {
   fill: none;
-  stroke: #855c3a;
-  stroke-width: 9;
+  stroke: #8b623e;
+  stroke-width: 10;
   stroke-linecap: round;
 }
 
 .rail-piece__track {
   fill: none;
-  stroke: #4f392f;
-  stroke-width: 7;
+  stroke: #3f302a;
+  stroke-width: 8;
   stroke-linecap: round;
 }
 
@@ -383,5 +410,9 @@ button {
   .piece-button {
     min-height: 96px;
     padding: 8px;
+  }
+
+  .train-card-sprite {
+    height: 74px;
   }
 }

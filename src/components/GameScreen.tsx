@@ -183,7 +183,7 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
           style={{ left: `${trainPosition.x}%`, top: `${trainPosition.y}%` }}
           aria-hidden="true"
         >
-          🚃
+          <span className={`train-token-sprite train-art train-art-${course.trainId}`} />
         </div>
         {course.gaps.map((gap, index) => {
           const placedPiece = state.placements[gap.id] ? piecesById.get(state.placements[gap.id]) : undefined;

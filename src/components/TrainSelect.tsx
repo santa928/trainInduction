@@ -22,9 +22,7 @@ export function TrainSelect({ trains, onSelectTrain }: TrainSelectProps): React.
             style={{ "--train-color": train.color, "--train-accent": train.accentColor } as CSSProperties}
             onClick={() => onSelectTrain(train.id)}
           >
-            <span className="train-emoji" aria-hidden="true">
-              {train.emoji}
-            </span>
+            <span className={`train-card-sprite train-art train-art-${train.id}`} aria-hidden="true" />
             <span>{train.name}</span>
           </button>
         ))}
