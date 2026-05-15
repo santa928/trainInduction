@@ -32,22 +32,22 @@ export function RailPiece({ shape, direction }: RailPieceProps): React.JSX.Eleme
       <g transform={`rotate(${rotation} 48 48)`}>
         {isCurve ? (
           <>
-            <path className="rail-piece__sleeper" d="M33 18 L63 18" />
-            <path className="rail-piece__sleeper" d="M29 34 L64 38" />
-            <path className="rail-piece__sleeper" d="M36 54 L68 66" />
-            <path className="rail-piece__sleeper" d="M54 68 L84 68" />
-            <path className="rail-piece__track" d="M36 14 Q36 60 82 60" />
-            <path className="rail-piece__track" d="M58 14 Q58 38 82 38" />
+            <path className="rail-piece__sleeper" d="M33 18 L61 18" />
+            <path className="rail-piece__sleeper" d="M31 34 L63 40" />
+            <path className="rail-piece__sleeper" d="M40 55 L66 66" />
+            <path className="rail-piece__sleeper" d="M58 76 L84 76" />
+            <path className="rail-piece__track" d="M34 12 C34 48 48 62 84 62" />
+            <path className="rail-piece__track" d="M58 12 C58 31 65 38 84 38" />
           </>
         ) : (
           <>
-            <path className="rail-piece__sleeper" d="M22 24 V72" />
-            <path className="rail-piece__sleeper" d="M36 24 V72" />
-            <path className="rail-piece__sleeper" d="M50 24 V72" />
-            <path className="rail-piece__sleeper" d="M64 24 V72" />
-            <path className="rail-piece__sleeper" d="M78 24 V72" />
-            <path className="rail-piece__track" d="M14 36 H82" />
-            <path className="rail-piece__track" d="M14 60 H82" />
+            <rect className="rail-piece__sleeper-plank" x="18" y="22" width="9" height="52" rx="4.5" />
+            <rect className="rail-piece__sleeper-plank" x="32" y="22" width="9" height="52" rx="4.5" />
+            <rect className="rail-piece__sleeper-plank" x="46" y="22" width="9" height="52" rx="4.5" />
+            <rect className="rail-piece__sleeper-plank" x="60" y="22" width="9" height="52" rx="4.5" />
+            <rect className="rail-piece__sleeper-plank" x="74" y="22" width="9" height="52" rx="4.5" />
+            <path className="rail-piece__track" d="M12 35 H84" />
+            <path className="rail-piece__track" d="M12 61 H84" />
           </>
         )}
         {isBridge ? <path className="rail-piece__bridge" d="M22 68 L36 32 L50 68 L64 32 L78 68" /> : null}

@@ -295,7 +295,7 @@ button {
 
 .track-board {
   position: relative;
-  width: min(100%, 760px, calc((100dvh - 380px) * var(--columns) / var(--rows)));
+  width: min(100%, 760px, calc((100dvh - 410px) * var(--columns) / var(--rows)));
   aspect-ratio: var(--columns) / var(--rows);
   justify-self: center;
   padding: clamp(10px, 2.2vw, 18px);
@@ -389,24 +389,27 @@ button {
 
 .train-token {
   position: absolute;
-  width: clamp(54px, 10vw, 82px);
-  height: clamp(40px, 7.5vw, 60px);
+  width: clamp(70px, 14vw, 112px);
+  height: clamp(50px, 9.8vw, 78px);
   display: grid;
   place-items: center;
   transform: translate(-50%, -50%);
-  border-radius: 18px;
-  background: #fffdf2;
+  border-radius: 22px;
+  background: rgb(255 253 242 / 92%);
   border: 3px solid #ffbf47;
   pointer-events: none;
   transition:
     left 90ms linear,
     top 90ms linear;
+  box-shadow:
+    0 7px 0 rgb(126 79 34 / 16%),
+    0 0 0 4px rgb(255 253 242 / 48%);
   z-index: 4;
 }
 
 .train-token-sprite {
-  width: 106%;
-  height: 92%;
+  width: 118%;
+  height: 108%;
   display: block;
   filter: drop-shadow(0 4px 0 rgb(74 54 38 / 16%));
 }
@@ -512,16 +515,21 @@ button {
 
 .rail-piece__sleeper {
   fill: none;
-  stroke: #9b6f46;
-  stroke-width: 11;
+  stroke: #a9784b;
+  stroke-width: 12;
   stroke-linecap: round;
+}
+
+.rail-piece__sleeper-plank {
+  fill: #a9784b;
 }
 
 .rail-piece__track {
   fill: none;
-  stroke: #3b302b;
-  stroke-width: 9;
+  stroke: #2f2925;
+  stroke-width: 9.5;
   stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .rail-piece__bridge {
