@@ -81,6 +81,7 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
   const startCell = course.path[0];
   const goalCell = course.path[course.path.length - 1];
   const trainPosition = cellToPercent(getRoutePoint(course.path, state.trainDistance), course);
+  const remainingGaps = Math.max(0, course.gaps.length - state.nextGapIndex);
 
   useEffect(() => {
     if (state.status !== "playing" || restartPaused) {
@@ -143,12 +144,27 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
 
   return (
     <main className="game-screen">
-      <header className="game-header">
-        <button autoFocus className="text-button game-exit-button" onClick={onExit}>
-          コースをえらぶ
+      <header className="game-header" aria-label="コースじょうほう">
+        <button autoFocus className="icon-button game-exit-button" aria-label="コースをえらぶ" onClick={onExit}>
+          ←
         </button>
-        <h1>{course.title}</h1>
+        <div className="game-title-cluster">
+          <span>コース</span>
+          <h1>{course.title}</h1>
+        </div>
+        <div className="course-stars" aria-label={`むずかしさ ${course.difficulty}`}>
+          {range(5).map((star) => (
+            <span key={star} className={star <= course.difficulty ? "active" : ""} aria-hidden="true">
+              ★
+            </span>
+          ))}
+        </div>
       </header>
+
+      <div className="status-chip" aria-live="polite">
+        <span aria-hidden="true">★</span>
+        <strong>あと{remainingGaps}つ</strong>
+      </div>
 
       <section
         className={`track-board track-board-${course.background}`}
