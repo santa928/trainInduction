@@ -206,7 +206,7 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
           return (
             <button
               key={gap.id}
-              className="gap-slot"
+              className={`gap-slot${placedPiece ? " gap-slot-filled" : ""}`}
               style={{ gridColumn: gap.position.x, gridRow: gap.position.y }}
               aria-label={`あな ${index + 1}${placedPiece ? ` ${placedPiece.label}` : ""}`}
               onClick={() => handleGapClick(gap.id)}
@@ -216,7 +216,7 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
               {placedPiece ? (
                 <>
                   <RailPiece shape={placedPiece.shape} direction={placedPiece.direction} />
-                  <span>{placedPiece.label}</span>
+                  <span className="gap-slot-label">{placedPiece.label}</span>
                 </>
               ) : (
                 <span>あな {index + 1}</span>

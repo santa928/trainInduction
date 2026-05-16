@@ -295,7 +295,7 @@ button {
 
 .track-board {
   position: relative;
-  width: min(100%, 760px, calc((100dvh - 410px) * var(--columns) / var(--rows)));
+  width: min(100%, 820px, calc((100dvh - 360px) * var(--columns) / var(--rows)));
   aspect-ratio: var(--columns) / var(--rows);
   justify-self: center;
   padding: clamp(10px, 2.2vw, 18px);
@@ -438,6 +438,24 @@ button {
     inset 0 0 0 3px rgb(255 255 255 / 50%);
 }
 
+.gap-slot-filled {
+  padding: 2px;
+}
+
+.gap-slot-filled .rail-piece {
+  width: min(118px, 98%);
+  height: min(118px, 98%);
+}
+
+.gap-slot-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .gap-slot span,
 .piece-button span {
   max-width: 100%;
@@ -478,7 +496,7 @@ button {
   box-shadow: 0 7px 0 #d4aa63;
 }
 
-.piece-button > span {
+.piece-button > span:not(.rail-piece) {
   min-width: 72px;
   padding: 5px 10px;
   border-radius: 999px;
@@ -498,61 +516,31 @@ button {
 }
 
 .rail-piece {
-  width: min(72px, 100%);
-  height: min(72px, 100%);
+  width: 112px;
+  max-width: 100%;
+  height: 112px;
+  max-height: 100%;
   display: block;
-  filter: drop-shadow(0 3px 0 rgb(82 57 39 / 13%));
+  background-image: var(--rail-image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  filter: drop-shadow(0 4px 0 rgb(82 57 39 / 12%));
+}
+
+.track-cell .rail-piece {
+  width: 100%;
+  height: 100%;
 }
 
 .gap-slot .rail-piece {
-  width: min(68px, 100%);
-  height: min(68px, 100%);
+  width: 96%;
+  height: 96%;
 }
 
-.rail-piece__base {
-  fill: #f2d08a;
-  stroke: rgb(255 253 242 / 72%);
-  stroke-width: 2;
-}
-
-.rail-piece__sleeper {
-  fill: none;
-  stroke: #a9784b;
-  stroke-width: 12;
-  stroke-linecap: round;
-}
-
-.rail-piece__sleeper-plank {
-  fill: #b88352;
-  stroke: rgb(117 76 45 / 18%);
-  stroke-width: 1;
-}
-
-.rail-piece__track {
-  fill: none;
-  stroke: #2d2824;
-  stroke-width: 8.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.rail-piece__track-inner {
-  stroke-width: 8;
-}
-
-.rail-piece__track-outer {
-  stroke-width: 9;
-}
-
-.rail-piece__water {
-  fill: rgb(111 190 214 / 52%);
-}
-
-.rail-piece__bridge-rail {
-  fill: none;
-  stroke: #6a4c36;
-  stroke-width: 5;
-  stroke-linecap: round;
+.piece-button .rail-piece {
+  width: 88px;
+  height: 88px;
 }
 
 .result-overlay {
