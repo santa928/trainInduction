@@ -145,6 +145,22 @@ describe("gameReducer", () => {
     expect(next.status).toBe("cleared");
   });
 
+  it("does not clear when the placed piece matches the declared answer but does not connect the route", () => {
+    const brokenCourse = {
+      ...course,
+      gaps: [{ ...course.gaps[0], requiredPieceId: course.pieces[1].id }],
+    };
+    const placed = gameReducer(createGameState(brokenCourse), {
+      type: "placePiece",
+      pieceId: brokenCourse.gaps[0].requiredPieceId,
+      gapId: brokenCourse.gaps[0].id,
+    });
+
+    const next = gameReducer(placed, { type: "advanceTrain", deltaDistance: 120 });
+
+    expect(next.status).toBe("retry");
+  });
+
   it("clears every authored course when each gap has its required piece", () => {
     for (const authoredCourse of courses) {
       const placed = authoredCourse.gaps.reduce(

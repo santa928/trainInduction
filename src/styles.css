@@ -295,14 +295,16 @@ button {
 
 .track-board {
   position: relative;
+  --board-padding: clamp(10px, 2.2vw, 18px);
+  --board-gap: 0px;
   width: min(100%, 820px, calc((100dvh - 360px) * var(--columns) / var(--rows)));
   aspect-ratio: var(--columns) / var(--rows);
   justify-self: center;
-  padding: clamp(10px, 2.2vw, 18px);
+  padding: var(--board-padding);
   display: grid;
   grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
   grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
-  gap: clamp(5px, 1.2vw, 9px);
+  gap: var(--board-gap);
   border-radius: 28px;
   overflow: hidden;
   border: clamp(6px, 1.6vw, 10px) solid #fffdf2;
@@ -346,11 +348,11 @@ button {
 
 .track-grid {
   position: absolute;
-  inset: clamp(10px, 2.2vw, 18px);
+  inset: var(--board-padding);
   display: grid;
   grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
   grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
-  gap: clamp(5px, 1.2vw, 9px);
+  gap: var(--board-gap);
   z-index: 1;
   pointer-events: none;
 }
@@ -439,12 +441,17 @@ button {
 }
 
 .gap-slot-filled {
-  padding: 2px;
+  padding: 0;
+  border-color: transparent;
+  background: rgb(255 253 242 / 66%);
+  box-shadow:
+    inset 0 -4px 0 rgb(92 65 45 / 14%),
+    0 2px 0 rgb(255 255 255 / 25%);
 }
 
 .gap-slot-filled .rail-piece {
-  width: min(118px, 98%);
-  height: min(118px, 98%);
+  width: 100%;
+  height: 100%;
 }
 
 .gap-slot-label {

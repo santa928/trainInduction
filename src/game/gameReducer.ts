@@ -1,6 +1,7 @@
 import type { GameState } from "./createGameState";
 import { createGameState } from "./createGameState";
 import type { PieceDefinition } from "../data/types";
+import { pieceConnectsRouteAtPoint } from "../data/railConnectivity";
 
 export type GameAction =
   | { readonly type: "placePiece"; readonly pieceId: string; readonly gapId: string }
@@ -121,7 +122,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         const placedPieceId = state.placements[nextGap.id];
         const placedPiece = state.course.pieces.find((piece) => piece.id === placedPieceId);
         const requiredPiece = state.course.pieces.find((piece) => piece.id === nextGap.requiredPieceId);
-        if (!isMatchingRailPiece(placedPiece, requiredPiece)) {
+        if (
+          !placedPiece ||
+          !requiredPiece ||
+          !isMatchingRailPiece(placedPiece, requiredPiece) ||
+          !pieceConnectsRouteAtPoint(placedPiece, state.course.path, nextGap.position)
+        ) {
           return { ...state, trainDistance, nextGapIndex, status: "retry" };
         }
         nextGapIndex += 1;

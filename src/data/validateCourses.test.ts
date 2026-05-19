@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { courses } from "./courses";
+import { courses, getPathTile } from "./courses";
+import { pieceConnectsRouteAtPathIndex } from "./railConnectivity";
 import { trains } from "./trains";
 import { validateCourses } from "./validateCourses";
 
@@ -58,6 +59,18 @@ describe("validateCourses", () => {
     expect(validateCourses(trains, broken)).toContain("course sora-1 path point 1 is outside the grid");
   });
 
+  it("renders every authored route tile with edges that connect to the previous and next route cells", () => {
+    for (const authoredCourse of courses) {
+      for (const [pathIndex] of authoredCourse.path.entries()) {
+        const tile = getPathTile(authoredCourse, pathIndex);
+
+        expect(pieceConnectsRouteAtPathIndex(tile, authoredCourse.path, pathIndex), `${authoredCourse.id}:${pathIndex}`).toBe(
+          true,
+        );
+      }
+    }
+  });
+
   it("rejects non-adjacent route points", () => {
     const broken = cloneCourses();
     broken[0].path[1].x = 5;
@@ -70,6 +83,15 @@ describe("validateCourses", () => {
     broken[0].gaps[0].position = { x: 1, y: 1 };
 
     expect(validateCourses(trains, broken)).toContain("course sora-1 gap sora-1-gap-1 is not on the route");
+  });
+
+  it("rejects required pieces that do not connect the route through a gap", () => {
+    const broken = cloneCourses();
+    broken[0].gaps[0].requiredPieceId = broken[0].pieces[1].id;
+
+    expect(validateCourses(trains, broken)).toContain(
+      "course sora-1 gap sora-1-gap-1 required piece does not connect the route",
+    );
   });
 
   it("rejects first gaps that are too close to the start", () => {

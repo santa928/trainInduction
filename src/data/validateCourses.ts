@@ -1,4 +1,5 @@
 import type { CourseDefinition, TrainDefinition } from "./types";
+import { pieceConnectsRouteAtPoint } from "./railConnectivity";
 
 const expectedCourseIdentity = (
   id: CourseDefinition["id"],
@@ -52,6 +53,10 @@ export function validateCourses(
     for (const gap of course.gaps) {
       if (!pieceIds.has(gap.requiredPieceId)) {
         errors.push(`course ${course.id} gap ${gap.id} requires unknown piece ${gap.requiredPieceId}`);
+      }
+      const requiredPiece = course.pieces.find((piece) => piece.id === gap.requiredPieceId);
+      if (requiredPiece && !pieceConnectsRouteAtPoint(requiredPiece, course.path, gap.position)) {
+        errors.push(`course ${course.id} gap ${gap.id} required piece does not connect the route`);
       }
     }
 
