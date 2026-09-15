@@ -83,11 +83,14 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
   const trainPosition = cellToPercent(getRoutePoint(course.path, state.trainDistance), course);
   const remainingGaps = Math.max(0, course.gaps.length - state.nextGapIndex);
   const gameEnded = state.status !== "playing";
-  const instruction = selectedPieceId
-    ? "あなをタップしてね"
-    : Object.keys(state.placements).length === course.gaps.length
-      ? "えきまで いこう！"
-      : "レールをえらんでね";
+  const canPlacePieces = !gameEnded && remainingGaps > 0;
+  const instruction = remainingGaps === 0
+    ? "えきまで いこう！"
+    : selectedPieceId
+      ? "あなをタップしてね"
+      : Object.keys(state.placements).length === course.gaps.length
+        ? "えきまで いこう！"
+        : "レールをえらんでね";
 
   useEffect(() => {
     if (state.status !== "playing" || restartPaused) {
@@ -258,9 +261,10 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
           return (
             <button
               key={piece.id}
-              className={`piece-button${selectedPieceId === piece.id ? " selected" : ""}`}
-              aria-pressed={selectedPieceId === piece.id}
-              draggable
+              className={`piece-button${canPlacePieces && selectedPieceId === piece.id ? " selected" : ""}`}
+              aria-pressed={canPlacePieces && selectedPieceId === piece.id}
+              disabled={!canPlacePieces}
+              draggable={canPlacePieces}
               onClick={() => handleSelectPiece(piece.id)}
               onDragStart={() => setDraggedPieceId(piece.id)}
               onDragEnd={() => setDraggedPieceId(undefined)}

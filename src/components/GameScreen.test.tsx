@@ -93,6 +93,24 @@ describe("GameScreen", () => {
     expect(screen.getByRole("button", { name: "あな 2" })).toBeEnabled();
   });
 
+  it("keeps the arrival guidance and disables spare pieces after the final gap", async () => {
+    vi.useFakeTimers();
+    const course = courses[0];
+    renderGameScreen(course);
+    fireEvent.click(screen.getByRole("button", { name: "よこ" }));
+    fireEvent.click(screen.getByRole("button", { name: "あな 1" }));
+    const sparePiece = screen.getByRole("button", { name: "みぎうえ" });
+    fireEvent.click(sparePiece);
+    expect(screen.getByText("あなをタップしてね")).toBeInTheDocument();
+
+    await advanceAfterStartPause(travelMs(course, course.gaps[0].arrivalDistance));
+
+    expect(sparePiece).toBeDisabled();
+    expect(sparePiece).toHaveAttribute("draggable", "false");
+    expect(screen.getByText("えきまで いこう！")).toBeInTheDocument();
+    expect(screen.queryByText("あなをタップしてね")).not.toBeInTheDocument();
+  });
+
   it("keeps difficulty 4 and 5 gap slots on unique grid cells", () => {
     for (const course of [courses[3], courses[4]]) {
       const cells = course.gaps.map((gap) => `${gap.position.x}:${gap.position.y}`);
