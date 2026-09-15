@@ -36,7 +36,7 @@ export function CourseSelect({
               onClick={() => onSelectCourse(course)}
             >
               <span>{course.title}</span>
-              <small>{unlocked ? `むずかしさ ${course.difficulty}` : "つぎのおたのしみ"}</small>
+              <small>{clearedCourseIds.includes(course.id) ? "クリア！" : unlocked ? `むずかしさ ${course.difficulty}` : "つぎのおたのしみ"}</small>
             </button>
           );
         })}
