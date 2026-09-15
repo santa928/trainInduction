@@ -82,6 +82,15 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
   const goalCell = course.path[course.path.length - 1];
   const trainPosition = cellToPercent(getRoutePoint(course.path, state.trainDistance), course);
   const remainingGaps = Math.max(0, course.gaps.length - state.nextGapIndex);
+  const gameEnded = state.status !== "playing";
+  const canPlacePieces = !gameEnded && remainingGaps > 0;
+  const instruction = remainingGaps === 0
+    ? "えきまで いこう！"
+    : selectedPieceId
+      ? "あなをタップしてね"
+      : Object.keys(state.placements).length === course.gaps.length
+        ? "えきまで いこう！"
+        : "レールをえらんでね";
 
   useEffect(() => {
     if (state.status !== "playing" || restartPaused) {
@@ -144,7 +153,7 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
 
   return (
     <main className="game-screen">
-      <header className="game-header" aria-label="コースじょうほう">
+      <header className="game-header" aria-label="コースじょうほう" inert={gameEnded}>
         <button autoFocus className="icon-button game-exit-button" aria-label="コースをえらぶ" onClick={onExit}>
           ←
         </button>
@@ -161,16 +170,21 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
         </div>
       </header>
 
-      <div className="status-chip" aria-live="polite">
-        <span aria-hidden="true">★</span>
-        <strong>あと{remainingGaps}つ</strong>
+      <div className="game-guidance" inert={gameEnded}>
+        <div className="status-chip" aria-live="polite">
+          <span aria-hidden="true">★</span>
+          <strong>えきまで あと{remainingGaps}かしょ</strong>
+        </div>
+        <p className="play-instruction" aria-live="polite">{instruction}</p>
       </div>
 
       <section
         className={`track-board track-board-${course.background}`}
         style={{ "--columns": course.grid.columns, "--rows": course.grid.rows } as CSSProperties}
         aria-label="せんろ"
+        inert={gameEnded}
       >
+        <div className="track-surface">
         <div className="track-grid" aria-hidden="true">
           {range(course.grid.rows).flatMap((row) =>
             range(course.grid.columns).map((column) => {
@@ -209,6 +223,7 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
               className={`gap-slot${placedPiece ? " gap-slot-filled" : ""}`}
               style={{ gridColumn: gap.position.x, gridRow: gap.position.y }}
               aria-label={`あな ${index + 1}${placedPiece ? ` ${placedPiece.label}` : ""}`}
+              disabled={index < state.nextGapIndex}
               onClick={() => handleGapClick(gap.id)}
               onDragOver={(event) => event.preventDefault()}
               onDrop={() => handleGapDrop(gap.id)}
@@ -224,20 +239,32 @@ export function GameScreen({ course, onClear, onExit, onTrainSelect, onNext }: G
             </button>
           );
         })}
+        </div>
       </section>
 
-      <section className="piece-tray" aria-label="レールピース">
-        {state.trayPieceIds.map((pieceId) => {
-          const piece = piecesById.get(pieceId);
-          if (!piece) {
-            return null;
+      <section
+        className="piece-tray"
+        aria-label="レールピース"
+        inert={gameEnded}
+        style={{ "--tray-columns": course.pieces.length, "--compact-columns": Math.min(3, course.pieces.length) } as CSSProperties}
+      >
+        {course.pieces.map((piece) => {
+          const isPlaced = !state.trayPieceIds.includes(piece.id);
+          if (isPlaced) {
+            return (
+              <div key={piece.id} className="piece-placeholder" aria-label={`${piece.label} おいたよ`}>
+                <span aria-hidden="true">✓</span>
+                <span>おいたよ</span>
+              </div>
+            );
           }
           return (
             <button
               key={piece.id}
-              className={`piece-button${selectedPieceId === piece.id ? " selected" : ""}`}
-              aria-pressed={selectedPieceId === piece.id}
-              draggable
+              className={`piece-button${canPlacePieces && selectedPieceId === piece.id ? " selected" : ""}`}
+              aria-pressed={canPlacePieces && selectedPieceId === piece.id}
+              disabled={!canPlacePieces}
+              draggable={canPlacePieces}
               onClick={() => handleSelectPiece(piece.id)}
               onDragStart={() => setDraggedPieceId(piece.id)}
               onDragEnd={() => setDraggedPieceId(undefined)}

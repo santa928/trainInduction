@@ -51,6 +51,12 @@ function isMatchingRailPiece(placedPiece: PieceDefinition | undefined, requiredP
   );
 }
 
+/** Returns whether a known gap is still ahead of the train and can be edited. */
+function isEditableGap(state: GameState, gapId: string): boolean {
+  const index = state.course.gaps.findIndex((gap) => gap.id === gapId);
+  return index >= state.nextGapIndex;
+}
+
 /**
  * Applies a single game action and returns a new immutable state.
  */
@@ -62,8 +68,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case "placePiece": {
       const pieceExists = state.course.pieces.some((piece) => piece.id === action.pieceId);
-      const gapExists = state.course.gaps.some((gap) => gap.id === action.gapId);
-      if (!pieceExists || !gapExists) {
+      if (!pieceExists || !isEditableGap(state, action.gapId)) {
         return state;
       }
 
@@ -73,6 +78,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
 
       const sourceGapId = Object.entries(state.placements).find(([, pieceId]) => pieceId === action.pieceId)?.[0];
+      if (sourceGapId && !isEditableGap(state, sourceGapId)) {
+        return state;
+      }
       const pieceIsInTray = state.trayPieceIds.includes(action.pieceId);
       if (!pieceIsInTray && !sourceGapId) {
         return state;
@@ -98,6 +106,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case "returnPiece": {
+      if (!isEditableGap(state, action.gapId)) {
+        return state;
+      }
       const pieceId = state.placements[action.gapId];
       if (!pieceId) {
         return state;

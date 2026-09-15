@@ -104,6 +104,33 @@ describe("gameReducer", () => {
     expect(next.trayPieceIds).toContain(course.pieces[0].id);
   });
 
+  it("keeps passed rails fixed when returning, replacing, or moving a piece", () => {
+    const placed = gameReducer(createGameState(multiGapCourse), {
+      type: "placePiece",
+      pieceId: multiGapCourse.pieces[0].id,
+      gapId: multiGapCourse.gaps[0].id,
+    });
+    const passed = gameReducer(placed, {
+      type: "advanceTrain",
+      deltaDistance: multiGapCourse.gaps[0].arrivalDistance,
+    });
+
+    expect(gameReducer(passed, { type: "returnPiece", gapId: multiGapCourse.gaps[0].id })).toBe(passed);
+    expect(gameReducer(passed, {
+      type: "placePiece", pieceId: multiGapCourse.pieces[2].id, gapId: multiGapCourse.gaps[0].id,
+    })).toBe(passed);
+    expect(gameReducer(passed, {
+      type: "placePiece", pieceId: multiGapCourse.pieces[0].id, gapId: multiGapCourse.gaps[1].id,
+    })).toBe(passed);
+
+    const upcoming = gameReducer(passed, {
+      type: "placePiece", pieceId: multiGapCourse.pieces[1].id, gapId: multiGapCourse.gaps[1].id,
+    });
+    expect(upcoming.placements[multiGapCourse.gaps[1].id]).toBe(multiGapCourse.pieces[1].id);
+    expect(gameReducer(upcoming, { type: "returnPiece", gapId: multiGapCourse.gaps[1].id })
+      .placements[multiGapCourse.gaps[1].id]).toBeUndefined();
+  });
+
   it("marks retry when train reaches an incorrect gap", () => {
     const initial = createGameState(course);
     const next = gameReducer(initial, {

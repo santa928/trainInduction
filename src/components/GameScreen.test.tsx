@@ -66,6 +66,51 @@ describe("GameScreen", () => {
     expect(screen.getByRole("button", { name: /あな 1.*よこ/ })).toBeInTheDocument();
   });
 
+  it("guides selection and keeps a placeholder after placement", async () => {
+    renderGameScreen();
+    expect(screen.getByText("レールをえらんでね")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "よこ" }));
+    expect(screen.getByText("あなをタップしてね")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "あな 1" }));
+    expect(screen.getByText("おいたよ")).toBeInTheDocument();
+    expect(screen.getByText("えきまで いこう！")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "あな 1 よこ" }));
+    expect(screen.queryByText("おいたよ")).not.toBeInTheDocument();
+    expect(screen.getByText("レールをえらんでね")).toBeInTheDocument();
+  });
+
+  it("disables only passed gaps and preserves the rail on attempted return", async () => {
+    vi.useFakeTimers();
+    const course = courses[1];
+    renderGameScreen(course);
+    fireEvent.click(screen.getAllByRole("button", { name: "たて" })[0]);
+    fireEvent.click(screen.getByRole("button", { name: "あな 1" }));
+    await advanceAfterStartPause(travelMs(course, course.gaps[0].arrivalDistance));
+    const passed = screen.getByRole("button", { name: "あな 1 たて" });
+    expect(passed).toBeDisabled();
+    fireEvent.click(passed);
+    expect(passed).toHaveAccessibleName("あな 1 たて");
+    expect(screen.getByRole("button", { name: "あな 2" })).toBeEnabled();
+  });
+
+  it("keeps the arrival guidance and disables spare pieces after the final gap", async () => {
+    vi.useFakeTimers();
+    const course = courses[0];
+    renderGameScreen(course);
+    fireEvent.click(screen.getByRole("button", { name: "よこ" }));
+    fireEvent.click(screen.getByRole("button", { name: "あな 1" }));
+    const sparePiece = screen.getByRole("button", { name: "みぎうえ" });
+    fireEvent.click(sparePiece);
+    expect(screen.getByText("あなをタップしてね")).toBeInTheDocument();
+
+    await advanceAfterStartPause(travelMs(course, course.gaps[0].arrivalDistance));
+
+    expect(sparePiece).toBeDisabled();
+    expect(sparePiece).toHaveAttribute("draggable", "false");
+    expect(screen.getByText("えきまで いこう！")).toBeInTheDocument();
+    expect(screen.queryByText("あなをタップしてね")).not.toBeInTheDocument();
+  });
+
   it("keeps difficulty 4 and 5 gap slots on unique grid cells", () => {
     for (const course of [courses[3], courses[4]]) {
       const cells = course.gaps.map((gap) => `${gap.position.x}:${gap.position.y}`);
