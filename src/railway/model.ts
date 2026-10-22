@@ -154,7 +154,8 @@ export function sampleRoute(
   };
 }
 
-export const STOP_MARGIN = 0.45;
+// Includes the bumper width projected during a preceding curve; verified against the 3D meshes.
+export const STOP_MARGIN = 0.65;
 export interface Run {
   stage: Stage;
   seed: number;

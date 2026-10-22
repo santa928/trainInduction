@@ -3,7 +3,7 @@ export default defineConfig({
   testDir: "./tests/e2e",
   timeout: 80000,
   expect: { timeout: 12000 },
-  workers: 2,
+  workers: 1,
   fullyParallel: true,
   reporter: [["list"], ["html", { open: "never" }]],
   webServer: {

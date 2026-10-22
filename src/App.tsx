@@ -2,8 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RailwayGame } from "./components/RailwayGame";
 import { DioramaView } from "./components/DioramaView";
 import { TrainBadge } from "./components/TrainBadge";
-import { RailIcon } from "./components/RailIcon";
-import { createRun, railAt } from "./railway/model";
+import { createRun } from "./railway/model";
 import { stages, trains } from "./railway/stages";
 import { completeJourney, loadJourney, saveJourney } from "./railway/progress";
 import { RailwayAudio } from "./railway/audio";
@@ -237,9 +236,65 @@ export default function App() {
                                 <path d="M11 14V9a5 5 0 0 1 10 0v5" />
                               </svg>
                             ) : (
-                              <RailIcon
-                                rail={railAt(stage, stage.gaps[0].pathIndex)}
-                              />
+                              <svg
+                                className="destination-icon"
+                                viewBox="0 0 80 70"
+                                aria-hidden="true"
+                              >
+                                <circle
+                                  cx="40"
+                                  cy="34"
+                                  r="29"
+                                  fill={
+                                    stage.chapter === 1
+                                      ? "#e3e8c9"
+                                      : stage.chapter === 2
+                                        ? "#dceae0"
+                                        : "#f1dfbb"
+                                  }
+                                />
+                                <rect
+                                  x="15"
+                                  y="34"
+                                  width="50"
+                                  height="25"
+                                  rx="4"
+                                  fill="#f7e6bd"
+                                />
+                                <path d="M10 35 40 14 70 35Z" fill="#ca9278" />
+                                <rect
+                                  x="24"
+                                  y="40"
+                                  width="10"
+                                  height="12"
+                                  rx="2"
+                                  fill="#99bdba"
+                                />
+                                <rect
+                                  x="46"
+                                  y="40"
+                                  width="10"
+                                  height="12"
+                                  rx="2"
+                                  fill="#99bdba"
+                                />
+                                <rect
+                                  x="36"
+                                  y="44"
+                                  width="8"
+                                  height="15"
+                                  rx="2"
+                                  fill="#b49b70"
+                                />
+                                <circle cx="40" cy="32" r="5" fill="#fff6dc" />
+                                <path
+                                  d="M40 28v4l3 1"
+                                  fill="none"
+                                  stroke="#a78961"
+                                  strokeWidth="1.5"
+                                  strokeLinecap="round"
+                                />
+                              </svg>
                             )}
                           </span>
                           <span className="stage-star" aria-hidden="true">

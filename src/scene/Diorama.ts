@@ -268,6 +268,7 @@ export class Diorama {
       far: 80,
     });
     this.camera.updateProjectionMatrix();
+    this.camera.updateMatrixWorld();
     this.projected = this.options.stage.gaps.map((gap) => {
       const point = this.options.stage.path[gap.pathIndex];
       const projected = new THREE.Vector3(point.x, 0.13, point.z).project(

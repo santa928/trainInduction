@@ -40,3 +40,13 @@ it("persists train and mute choices across reload", () => {
   );
   expect(screen.getByRole("button", { name: "おとを だす" })).toBeVisible();
 });
+
+it("does not reveal the first rail answer on the stage map", () => {
+  render(<App />);
+  fireEvent.click(screen.getByRole("button", { name: "あそぶ" }));
+  expect(
+    screen
+      .getByRole("button", { name: /ステージ 1 / })
+      .querySelector(".rail-icon"),
+  ).toBeNull();
+});

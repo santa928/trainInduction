@@ -15,3 +15,8 @@ Base: d7fe410812c9f0e56f6abf49896219630fa5d89e
 - Dependency audit: existing 6 entries (2 critical/2 high/2 moderate) → 0 after Vitest 5.0.5 and compatible Vite/source-map patch updates. No new runtime dependency beyond three.
 - Pages workflow changed to manual execution and checks its own checkout before upload; no workflow was triggered.
 - Task 4: in progress — full browser suite and fresh code review.
+
+- Fresh independent review: 3 important findings (stale camera matrices, curved bumper safety, answer art on stage map) and repeated translated route. All four reproduced with new failing tests (RED log train-v2-review-red.log).
+- Fix pass: refresh camera world matrices before projection; conservative curved-stop margin 0.65 checked against actual turned meshes at every gap; neutral destination stamps; redesign stage 9 and normalized-route uniqueness test.
+- Review re-grade: repeated route treated as important under the user's quality requirement, fixed with the other findings. No deferred minor findings.
+- Browser-run ruling: serialize GPU tests on this software renderer. Three concurrent software WebGL instances caused ~7-second input latencies and genuine timed failures; do not weaken game deadlines to make overloaded automation pass. Real-time tests will run one browser at a time.

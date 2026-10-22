@@ -1692,3 +1692,11 @@ button:active:not(:disabled) {
     font-size: 28px;
   }
 }
+.stage-picture > svg.destination-icon {
+  width: 100%;
+  height: 100%;
+  max-width: 66px;
+  max-height: 66px;
+  fill: none;
+  stroke: none;
+}

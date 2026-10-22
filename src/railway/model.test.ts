@@ -173,3 +173,14 @@ describe("authored railway", () => {
     }
   });
 });
+
+describe("stage variety", () => {
+  it("has twelve routes even after removing their position on the board", () => {
+    const normalized = stages.map((stage) =>
+      JSON.stringify(
+        stage.path.map((p) => [p.x - stage.path[0].x, p.z - stage.path[0].z]),
+      ),
+    );
+    expect(new Set(normalized).size).toBe(12);
+  });
+});
