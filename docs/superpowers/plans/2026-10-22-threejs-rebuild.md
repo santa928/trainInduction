@@ -52,6 +52,6 @@ Consumes Task 1 route/state and Task 2 progress/audio. Three.js objects contain 
 ### Task 4: Browser verification, review and handoff
 
 Files: `tests/e2e/rebuild-v2.spec.ts`, Playwright config, README, `docs/rebuild-v2-results.md`.
-- [ ] Test all 12 stages through real browser inputs and motion; assert wrong/missing failures, retry, rapid input, pause, resize, persistence, no invalid entry.
-- [ ] Run build, unit suite and browser tests. Capture and inspect mobile/tablet/landscape/desktop and success/failure screenshots.
-- [ ] Fresh whole-branch review, address correctness findings, record limitations, commit and keep local preview available. No merge/publish.
+- [x] Test all 12 stages through real browser inputs and motion; assert wrong/missing failures, retry, rapid input, pause, resize, persistence, no invalid entry.
+- [x] Run build, unit suite and browser tests. Capture and inspect mobile/tablet/landscape/desktop and success/failure screenshots.
+- [x] Fresh whole-branch review, address correctness findings, record limitations, commit and keep local preview available. No merge/publish.

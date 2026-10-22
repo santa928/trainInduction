@@ -288,7 +288,13 @@ export function RailwayGame({
             )}
           </span>
           <span className="play-hint">
-            {selected ? "あなに おいてね" : "レールを えらんでね"}
+            {run.nextGap >= stage.gaps.length
+              ? "えきまで いこう！"
+              : selected
+                ? "あなに おいてね"
+                : stage.gaps.every((gap) => Boolean(run.placements[gap.id]))
+                  ? "でんしゃが くるよ"
+                  : "レールを えらんでね"}
           </span>
         </div>
         <div className="play-board" role="region" aria-label="3Dの せんろ">

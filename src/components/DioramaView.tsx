@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Run } from "../railway/model";
 import type { Train } from "../railway/stages";
 import type { Diorama, Projection } from "../scene/Diorama";
@@ -17,14 +17,20 @@ export function DioramaView(props: Props) {
   const host = useRef<HTMLDivElement>(null);
   const latest = useRef(props);
   latest.current = props;
+  const lastFrame = useRef(0);
+  useLayoutEffect(() => {
+    // A background tab may deliver no frames between pausing and resuming.
+    // The first active frame must not charge that suspended interval.
+    lastFrame.current = 0;
+  }, [props.run.paused]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [epoch, setEpoch] = useState(0);
   useEffect(() => {
     let disposed = false,
       scene: Diorama | undefined,
-      frame = 0,
-      last = 0;
+      frame = 0;
+    lastFrame.current = 0;
     setLoading(true);
     setError(false);
     void import("../scene/Diorama")
@@ -55,9 +61,10 @@ export function DioramaView(props: Props) {
           const animate = (now: number) => {
             if (disposed) return;
             frame = requestAnimationFrame(animate);
+            const last = lastFrame.current;
             if (last && now - last < 1000 / 30) return;
             const seconds = last ? (now - last) / 1000 : 0;
-            last = now;
+            lastFrame.current = now;
             latest.current.onFrame?.(seconds);
             scene?.render(latest.current.run, now / 1000);
           };

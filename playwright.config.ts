@@ -13,7 +13,9 @@ export default defineConfig({
   },
   use: {
     baseURL: "http://127.0.0.1:4173/trainInduction/",
-    trace: "retain-on-failure",
+    // DOM snapshots also stall software WebGL and consume the real-time deadline.
+    // Retain assertion logs and milestone/failure screenshots instead.
+    trace: "off",
     screenshot: "only-on-failure",
     deviceScaleFactor: 1,
   },

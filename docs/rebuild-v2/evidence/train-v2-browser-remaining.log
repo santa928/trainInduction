@@ -1,0 +1,185 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test --grep-invert real-time clear [1-8]:
+
+
+Running 18 tests using 1 worker
+
+  ✓   1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 9: つづく カーブ (35.1s)
+  ✓   2 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 10: ゆうやけの おか (32.3s)
+  ✓   3 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 11: さきを みてみよう (36.7s)
+  ✘   4 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 12: きみは レールめいじん (1.3m)
+  ✓   5 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:59:1 › wrong rail fails before entry, retry resets all work, and taps cannot edit behind result (20.5s)
+  ✓   6 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:99:1 › missing rail fails, rapid select is harmless, and progress survives reload (48.8s)
+  ✘   7 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:124:1 › return, overwrite, resize and background pause retain state and large touch targets (1.4m)
+  ✓   8 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:191:1 › touch drag and cancellation preserve a finite inventory (13.5s)
+  ✓   9 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:242:1 › WebGL context loss pauses and restoration requires deliberate resume (8.4s)
+  -  10 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 9: つづく カーブ
+  -  11 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 10: ゆうやけの おか
+  -  12 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 11: さきを みてみよう
+  -  13 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 12: きみは レールめいじん
+  ✓  14 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:59:1 › wrong rail fails before entry, retry resets all work, and taps cannot edit behind result (16.9s)
+  ✓  15 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:99:1 › missing rail fails, rapid select is harmless, and progress survives reload (42.0s)
+  ✘  16 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:124:1 › return, overwrite, resize and background pause retain state and large touch targets (3.7s)
+  -  17 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:191:1 › touch drag and cancellation preserve a finite inventory
+  -  18 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:242:1 › WebGL context loss pauses and restoration requires deliberate resume
+
+
+  1) [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 12: きみは レールめいじん ────────
+
+    Test timeout of 80000ms exceeded.
+
+    Error: locator.tap: Test timeout of 80000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'あな 5', exact: true })
+        - locator resolved to <button aria-label="あな 5" data-filled="false" data-locked="false" data-gap="journey-12-gap-5" class="rail-gap  receiving approaching ">…</button>
+      - attempting tap action
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - performing tap action
+        - <div role="dialog" aria-modal="true" class="game-modal failure-modal" aria-labelledby="railway-result-title">…</div> intercepts pointer events
+      - retrying tap action
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - <div role="dialog" aria-modal="true" class="game-modal failure-modal" aria-labelledby="railway-result-title">…</div> intercepts pointer events
+      - retrying tap action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div role="dialog" aria-modal="true" class="game-modal failure-modal" aria-labelledby="railway-result-title">…</div> intercepts pointer events
+        - retrying tap action
+          - waiting 100ms
+        32 × waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <div role="dialog" aria-modal="true" class="game-modal failure-modal" aria-labelledby="railway-result-title">…</div> intercepts pointer events
+         - retrying tap action
+           - waiting 500ms
+
+
+      27 |     await page
+      28 |       .getByRole("button", { name: `あな ${index + 1}`, exact: true })
+    > 29 |       .tap();
+         |        ^
+      30 |   }
+      31 | }
+      32 |
+        at fillStage (/app/tests/e2e/rebuild-v2.spec.ts:29:8)
+        at /app/tests/e2e/rebuild-v2.spec.ts:44:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/rebuild-v2-real-time-clear-12-きみは-レールめいじん-chromium-touch/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/rebuild-v2-real-time-clear-12-きみは-レールめいじん-chromium-touch/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/rebuild-v2-real-time-clear-12-きみは-レールめいじん-chromium-touch/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/rebuild-v2-real-time-clear-12-きみは-レールめいじん-chromium-touch/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:124:1 › return, overwrite, resize and background pause retain state and large touch targets
+
+    Test timeout of 80000ms exceeded.
+
+    Error: locator.tap: Test timeout of 80000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'あな 1 おいたレール', exact: true })
+        - locator resolved to <button data-filled="true" data-locked="false" aria-label="あな 1 おいたレール" data-gap="journey-12-gap-1" class="rail-gap filled  approaching ">…</button>
+      - attempting tap action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div role="dialog" aria-modal="true" class="game-modal failure-modal" aria-labelledby="railway-result-title">…</div> intercepts pointer events
+        - retrying tap action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div role="dialog" aria-modal="true" class="game-modal failure-modal" aria-labelledby="railway-result-title">…</div> intercepts pointer events
+        - retrying tap action
+          - waiting 100ms
+        18 × waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <div role="dialog" aria-modal="true" class="game-modal failure-modal" aria-labelledby="railway-result-title">…</div> intercepts pointer events
+         - retrying tap action
+           - waiting 500ms
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+
+
+      176 |   await page
+      177 |     .getByRole("button", { name: "あな 1 おいたレール", exact: true })
+    > 178 |     .tap();
+          |      ^
+      179 |   await expect(page.locator(`.rail-choice[data-piece="${id}"]`)).toBeVisible();
+      180 |   await page.locator(`.rail-choice[data-piece="${id}"]`).tap();
+      181 |   await page.getByRole("button", { name: "あな 1", exact: true }).tap();
+        at /app/tests/e2e/rebuild-v2.spec.ts:178:6
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-chromium-touch/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-chromium-touch/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-chromium-touch/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-chromium-touch/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:124:1 › return, overwrite, resize and background pause retain state and large touch targets
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      160 |             box.y < other.y + other.h &&
+      161 |             box.y + box.h > other.y,
+    > 162 |         ).toBe(false);
+          |           ^
+      163 |     }
+      164 |     const tray = await page.locator(".rail-tray").boundingBox();
+      165 |     expect(tray!.y + tray!.height).toBeLessThanOrEqual(size.height);
+        at /app/tests/e2e/rebuild-v2.spec.ts:162:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-webkit-touch/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-webkit-touch/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-webkit-touch/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-webkit-touch/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 12: きみは レールめいじん ─────────
+    [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:124:1 › return, overwrite, resize and background pause retain state and large touch targets
+    [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:124:1 › return, overwrite, resize and background pause retain state and large touch targets
+  6 skipped
+  9 passed (7.2m)

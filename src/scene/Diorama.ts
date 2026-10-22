@@ -249,10 +249,11 @@ export class Diorama {
     if (!width || !height) return;
     this.width = width;
     this.height = height;
+    const shortBoard = !this.options.preview && height < 400;
     this.camera.position.set(
       2.5,
-      this.options.preview ? 11 : width >= 600 ? 12 : 13,
-      this.options.preview ? 12 : width >= 600 ? 12.5 : 10,
+      this.options.preview ? 11 : shortBoard ? 15 : width >= 600 ? 12 : 13,
+      this.options.preview ? 12 : shortBoard ? 7.5 : width >= 600 ? 12.5 : 10,
     );
     this.camera.lookAt(2.5, 0, 2.5);
     this.renderer.setSize(width, height);
@@ -278,7 +279,7 @@ export class Diorama {
         id: gap.id,
         x: ((projected.x + 1) * width) / 2,
         y: ((1 - projected.y) * height) / 2,
-        size: Math.max(44, Math.min(76, (width / spanX) * 0.8)),
+        size: Math.max(44, Math.min(76, (width / spanX) * 0.72)),
       };
     });
     this.options.onProjection(this.projected);

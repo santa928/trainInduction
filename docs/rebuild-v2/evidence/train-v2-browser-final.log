@@ -1,0 +1,23 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test
+
+
+Running 34 tests using 1 worker
+
+  ✓   1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 1: はじめの いっぽ (34.4s)
+  ✓   2 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 2: おくへ すすもう (32.1s)
+  ✓   3 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 3: くるりと まがろう (33.9s)
+  ✓   4 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 4: はなばたけの カーブ (34.0s)
+  ✓   5 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 5: かわべの ふたつ (37.3s)
+  ✓   6 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 6: はんたいむきの たび (38.2s)
+  ✘   7 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 7: くねくね さんぽ (1.4m)
+  ✓   8 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 8: みずいろの みち (33.2s)
+  ✘   9 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 9: つづく カーブ (1.4m)
+  ✘  10 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 10: ゆうやけの おか (1.4m)
+  ✘  11 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 11: さきを みてみよう (1.4m)
+npm error path /app
+npm error command failed
+npm error signal SIGTERM
+npm error command sh -c playwright test
+npm error A complete log of this run can be found in: /root/.npm/_logs/2026-10-22T17_20_29_680Z-debug-0.log

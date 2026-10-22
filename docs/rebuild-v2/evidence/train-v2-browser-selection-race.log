@@ -1,0 +1,42 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test --grep real-time clear 12:|return, overwrite
+
+
+Running 4 tests using 1 worker
+
+  ✓  1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:60:3 › real-time clear 12: きみは レールめいじん (53.7s)
+  ✘  2 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:150:1 › return, overwrite, resize and background pause retain state and large touch targets (1.3m)
+  -  3 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:60:3 › real-time clear 12: きみは レールめいじん
+  ✓  4 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:150:1 › return, overwrite, resize and background pause retain state and large touch targets (51.7s)
+
+
+  1) [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:150:1 › return, overwrite, resize and background pause retain state and large touch targets
+
+    Test timeout of 80000ms exceeded.
+
+    Error: locator.evaluate: Test timeout of 80000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'あな 1 おいたレール', exact: true })
+
+
+      20 | // Real touch input without the locator's two-frame stability wait consuming a timed puzzle.
+      21 | async function touch(page: Page, target: Locator) {
+    > 22 |   const point = await target.evaluate((element) => {
+         |                              ^
+      23 |     const r = element.getBoundingClientRect(),
+      24 |       x = r.x + r.width / 2,
+      25 |       y = r.y + r.height / 2;
+        at touch (/app/tests/e2e/rebuild-v2.spec.ts:22:30)
+        at /app/tests/e2e/rebuild-v2.spec.ts:215:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-chromium-touch/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/rebuild-v2-return-overwrit-0942f-ate-and-large-touch-targets-chromium-touch/error-context.md
+
+  1 failed
+    [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:150:1 › return, overwrite, resize and background pause retain state and large touch targets
+  1 skipped
+  2 passed (3.2m)

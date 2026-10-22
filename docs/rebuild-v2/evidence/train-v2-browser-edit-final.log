@@ -1,0 +1,11 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test --grep return, overwrite
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:150:1 › return, overwrite, resize and background pause retain state and large touch targets (41.2s)
+  ✓  2 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:150:1 › return, overwrite, resize and background pause retain state and large touch targets (18.5s)
+
+  2 passed (1.1m)

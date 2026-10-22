@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type Locator } from "@playwright/test";
 import { stages } from "../../src/railway/stages";
 import { railAt, routeTiles, STOP_MARGIN } from "../../src/railway/model";
 
@@ -17,16 +17,42 @@ async function openStage(page: Page, number: number, unlock = false) {
     .tap();
   await expect(page.locator(".rail-choice").first()).toBeEnabled();
 }
+// Real touch input without the locator's two-frame stability wait consuming a timed puzzle.
+async function touch(page: Page, target: Locator) {
+  const point = await target.evaluate((element) => {
+    const r = element.getBoundingClientRect(),
+      x = r.x + r.width / 2,
+      y = r.y + r.height / 2;
+    return {
+      x,
+      y,
+      width: r.width,
+      height: r.height,
+      hit: document.elementFromPoint(x, y)?.closest("button") === element,
+    };
+  });
+  expect(point.width).toBeGreaterThan(0);
+  expect(point.height).toBeGreaterThan(0);
+  expect(point.hit).toBe(true);
+  await page.touchscreen.tap(point.x, point.y);
+}
 async function fillStage(page: Page, number: number) {
   const stage = stages[number - 1];
   for (const [index, gap] of stage.gaps.entries()) {
-    await page
+    const piece = page
       .locator(`.rail-choice[data-rail="${railAt(stage, gap.pathIndex)}"]`)
-      .first()
-      .tap();
-    await page
-      .getByRole("button", { name: `あな ${index + 1}`, exact: true })
-      .tap();
+      .first();
+    await touch(page, piece);
+    await expect(piece).toHaveAttribute("aria-pressed", "true");
+    const slot = page.getByRole("button", {
+      name: `あな ${index + 1}`,
+      exact: true,
+    });
+    await touch(page, slot);
+    await expect(page.locator(`[data-gap="${gap.id}"]`)).toHaveAttribute(
+      "data-filled",
+      "true",
+    );
   }
 }
 
@@ -46,6 +72,7 @@ for (const stage of stages)
       page.getByRole("heading", { name: "えきに ついたよ！" }),
     ).toBeVisible({ timeout: 65000 });
     expect(errors).toEqual([]);
+    await expect(page.locator(".play-hint")).toHaveText("えきまで いこう！");
     const saved = await page.evaluate(() =>
       JSON.parse(localStorage.getItem("train-induction-progress-v2")!),
     );
@@ -133,12 +160,19 @@ test("return, overwrite, resize and background pause retain state and large touc
     await page.locator(".railway-game").getAttribute("data-distance"),
   ).toBe(frozen);
   for (const size of [
+    { width: 390, height: 664 },
     { width: 390, height: 844 },
     { width: 768, height: 1024 },
     { width: 844, height: 390 },
     { width: 1280, height: 720 },
   ]) {
     await page.setViewportSize(size);
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
     const boxes = await page.locator(".rail-gap").evaluateAll((es) =>
       es.map((e) => {
         const r = e.getBoundingClientRect();
@@ -167,22 +201,55 @@ test("return, overwrite, resize and background pause retain state and large touc
     });
   }
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+  // Check repeated edits on the beginner's longer approach, after measuring the dense final board.
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "たびを えらぶ", exact: true })
+    .tap();
+  await page.getByRole("button", { name: /^ステージ 1 / }).tap();
+  await expect(page.locator(".rail-choice").first()).toBeEnabled();
+  await page.getByRole("button", { name: "ひとやすみ", exact: true }).tap();
+  // Read fixed slot positions while paused so instrumentation does not consume the edit window.
+  const positions = await page.evaluate(() => {
+    const center = (element: Element) => {
+      const r = element.getBoundingClientRect();
+      return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+    };
+    const choices = [...document.querySelectorAll<HTMLElement>(".rail-choice")];
+    return {
+      first: { ...center(choices[0]), id: choices[0].dataset.piece! },
+      second: { ...center(choices[1]), id: choices[1].dataset.piece! },
+      gap: center(document.querySelector(".rail-gap")!),
+    };
+  });
   await page.getByRole("button", { name: "つづける", exact: false }).tap();
-  const first = page.locator(".rail-choice").first();
-  const id = await first.getAttribute("data-piece");
-  await first.tap();
-  await page.getByRole("button", { name: "あな 1", exact: true }).tap();
-  await page
-    .getByRole("button", { name: "あな 1 おいたレール", exact: true })
-    .tap();
-  await expect(page.locator(`.rail-choice[data-piece="${id}"]`)).toBeVisible();
-  await page.locator(`.rail-choice[data-piece="${id}"]`).tap();
-  await page.getByRole("button", { name: "あな 1", exact: true }).tap();
-  await page.locator(".rail-choice").first().tap();
-  await page
-    .getByRole("button", { name: "あな 1 おいたレール", exact: true })
-    .tap();
-  await expect(page.locator(`.rail-choice[data-piece="${id}"]`)).toBeVisible();
+  const tap = (point: { x: number; y: number }) =>
+    page.touchscreen.tap(point.x, point.y);
+  const firstPiece = page.locator(
+    `.rail-choice[data-piece="${positions.first.id}"]`,
+  );
+  const firstGap = page.locator(".rail-gap").first();
+  await tap(positions.first);
+  await expect(firstPiece).toHaveAttribute("aria-pressed", "true");
+  await tap(positions.gap);
+  await expect(firstGap).toHaveAttribute("data-filled", "true");
+  await tap(positions.gap);
+  await expect(firstPiece).toBeVisible();
+  await tap(positions.first);
+  await tap(positions.gap);
+  await tap(positions.second);
+  await tap(positions.gap);
+  await expect(firstPiece).toBeVisible();
+  await expect(firstGap).toHaveAttribute("data-filled", "true");
+  await expect(
+    page.locator(`.rail-choice[data-piece="${positions.second.id}"]`),
+  ).toHaveCount(0);
   await page.evaluate(() => window.dispatchEvent(new Event("blur")));
   await expect(page.getByRole("heading", { name: "ひとやすみ" })).toBeVisible();
 });
