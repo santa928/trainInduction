@@ -1,0 +1,10 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test --project=chromium-touch --grep real-time clear 7:
+
+
+Running 1 test using 1 worker
+
+  ✓  1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:34:3 › real-time clear 7: くねくね さんぽ (31.7s)
+
+  1 passed (35.8s)

@@ -1,0 +1,13 @@
+{
+  "branch": "rebuild/threejs-complete",
+  "base": "d7fe410812c9f0e56f6abf49896219630fa5d89e",
+  "archive": "trainInduction-review.zip",
+  "bytes": 218174,
+  "sha256": "f140f155b77a91ba6425cd3cc9f61b62c85d1e00d842d3fae5f06d35b0647768",
+  "dist_files": {
+    "index.html": "21294458ddbe97269f0e33cf47ca0cd8ae6e3a01d728889719da2d82ef7e0021",
+    "assets/index-wNjkTGi2.js": "c465c26b1fb81a1790391ebf8222bbdb92f5a8a8c1da5a3bc037179ba1642d54",
+    "assets/Diorama-BjmrHilb.js": "f8635db9641bc633e00dfdee9ef452a55cea5b7ae12a6558c6c9e7bd2ba5a455",
+    "assets/index-DZ6R0CL8.css": "5ab204535ec557ae8031b32ebfc0c01e2b92b24b9ac160a6546e0f9ebd7ab811"
+  }
+}

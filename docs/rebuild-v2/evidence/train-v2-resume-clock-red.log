@@ -1,0 +1,38 @@
+
+> train-induction@0.1.0 test
+> vitest run src/components/DioramaView.test.tsx
+
+
+ RUN  v5.0.5 /app
+
+ ❯ src/components/DioramaView.test.tsx (1 test | 1 failed) 55ms
+   × excludes a suspended interval even when pause and resume occur between animation frames 52ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/DioramaView.test.tsx > excludes a suspended interval even when pause and resume occur between animation frames
+AssertionError: expected last "vi.fn()" call to have been called with [ +0 ]
+
+- Expected
++ Received
+
+  [
+-   0,
++   60,
+  ]
+
+ ❯ src/components/DioramaView.test.tsx:36:19
+     34|   app.rerender(view(false));
+     35|   act(() => next(61100));
+     36|   expect(onFrame).toHaveBeenLastCalledWith(0);
+       |                   ^
+     37|   act(() => next(61200));
+     38|   expect(onFrame).toHaveBeenLastCalledWith(0.1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  18:02:36
+   Duration  1.23s (environment 60%, import 13%, transform 11%, setup 9%, tests 6%, worker 1%)

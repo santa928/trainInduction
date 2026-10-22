@@ -1,0 +1,37 @@
+
+> train-induction@0.1.0 test
+> vitest run src/scene/Diorama.test.ts
+
+
+ RUN  v5.0.5 /app
+
+ ❯ src/scene/Diorama.test.ts (2 tests | 1 failed) 18ms
+   ✓ aligns DOM holes with the rendered sockets after changing camera pose on resize 5ms
+   × keeps projected touch squares apart in portrait, tablet and desktop camera poses 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/scene/Diorama.test.ts > keeps projected touch squares apart in portrait, tablet and desktop camera poses
+AssertionError: 906x600/journey-12-gap-1/journey-12-gap-5: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/scene/Diorama.test.ts:55:127
+     53|       expect(p.size).toBeGreaterThanOrEqual(44);
+     54|       for(const q of projection.slice(i+1)) {
+     55|         expect(Math.abs(p.x-q.x)<(p.size+q.size)/2&&Math.abs(p.y-q.y)<…
+       |                                                                                                                               ^
+     56|       }
+     57|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  17:18:10
+   Duration  1.09s (environment 65%, transform 15%, import 9%, setup 9%, tests 2%, worker 1%)

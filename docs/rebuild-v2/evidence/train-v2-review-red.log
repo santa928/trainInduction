@@ -1,0 +1,198 @@
+
+> train-induction@0.1.0 test
+> vitest run src/railway/model.test.ts src/scene/models.test.ts src/scene/Diorama.test.ts src/App.test.tsx
+
+
+ RUN  v5.0.5 /app
+
+ ❯ src/railway/model.test.ts (10 tests | 1 failed) 53ms
+   ✓ authored railway (9)
+     ✓ contains twelve distinct connected puzzles with progressively more gaps 8ms
+     ✓ clears every stage with actual connecting pieces regardless of piece ID 3ms
+     ✓ stops before each missing or wrong rail even with a huge frame delta 3ms
+     ✓ resets all work on retry, preserves tray positions, and ignores repeated result actions 9ms
+     ✓ supports return, overwrite and moving without duplicating finite pieces 2ms
+     ✓ locks rails once the train enters and rejects editing while paused 1ms
+     ✓ has a three second preparation and ignores invalid deltas 1ms
+     ✓ shuffles only the tray, with different starting positions across seeds 0ms
+     ✓ samples continuous curves with unit tangents through every tile seam 7ms
+   ❯ stage variety (1)
+     × has twelve routes even after removing their position on the board 14ms
+ ❯ src/scene/Diorama.test.ts (1 test | 1 failed) 14ms
+   × aligns DOM holes with the rendered sockets after changing camera pose on resize 12ms
+ ❯ src/scene/models.test.ts (2 tests | 1 failed) 257ms
+   ✓ keeps the visible locomotive nose behind the simulation's stopping margin 98ms
+   × keeps the entire turned locomotive outside every upcoming gap entrance 158ms
+ ❯ src/App.test.tsx (4 tests | 1 failed) 536ms
+   ✓ chooses a train and opens the shared stage map with progression locks 299ms
+   ✓ preserves legacy progress and exposes migrated stages without fake clears 82ms
+   ✓ persists train and mute choices across reload 77ms
+   × does not reveal the first rail answer on the stage map 74ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.test.tsx > does not reveal the first rail answer on the stage map
+AssertionError: expected SVGSVGElement{ …(2), [Symbol(impl)]: SVGSVGElementImpl{ …(34), …(2) } } to be null
+
+- Expected:
+null
+
++ Received:
+<svg
+  aria-hidden="true"
+  class="rail-icon"
+  viewBox="0 0 100 100"
+>
+  <rect
+    fill="#f1dbad"
+    height="88"
+    rx="16"
+    width="88"
+    x="6"
+    y="6"
+  />
+  <rect
+    fill="#f9e6bd"
+    height="79"
+    rx="13"
+    width="82"
+    x="9"
+    y="9"
+  />
+  <line
+    stroke="#b88a58"
+    stroke-linecap="round"
+    stroke-width="9"
+    x1="16.4"
+    x2="16.4"
+    y1="22.799999999999997"
+    y2="77.2"
+  />
+  <line
+    stroke="#b88a58"
+    stroke-linecap="round"
+    stroke-width="9"
+    x1="33.2"
+    x2="33.2"
+    y1="22.799999999999997"
+    y2="77.2"
+  />
+  <line
+    stroke="#b88a58"
+    stroke-linecap="round"
+    stroke-width="9"
+    x1="50"
+    x2="50"
+    y1="22.799999999999997"
+    y2="77.2"
+  />
+  <line
+    stroke="#b88a58"
+    stroke-linecap="round"
+    stroke-width="9"
+    x1="66.8"
+    x2="66.8"
+    y1="22.799999999999997"
+    y2="77.2"
+  />
+  <line
+    stroke="#b88a58"
+    stroke-linecap="round"
+    stroke-width="9"
+    x1="83.6"
+    x2="83.6"
+    y1="22.799999999999997"
+    y2="77.2"
+  />
+  <g>
+    <path
+      d="M10,63.6 L15,63.6 L20,63.6 L25,63.6 L30,63.6 L35,63.6 L40,63.6 L45,63.6 L50,63.6 L55,63.6 L60,63.6 L65,63.6 L70,63.6 L75,63.6 L80,63.6 L85,63.6 L90,63.6"
+      fill="none"
+      stroke="#694e3c"
+      stroke-linecap="round"
+      stroke-width="7"
+    />
+    <path
+      d="M10,63.6 L15,63.6 L20,63.6 L25,63.6 L30,63.6 L35,63.6 L40,63.6 L45,63.6 L50,63.6 L55,63.6 L60,63.6 L65,63.6 L70,63.6 L75,63.6 L80,63.6 L85,63.6 L90,63.6"
+      fill="none"
+      stroke="#e9e4cd"
+      stroke-linecap="round"
+      stroke-width="3"
+    />
+  </g>
+  <g>
+    <path
+      d="M10,36.4 L15,36.4 L20,36.4 L25,36.4 L30,36.4 L35,36.4 L40,36.4 L45,36.4 L50,36.4 L55,36.4 L60,36.4 L65,36.4 L70,36.4 L75,36.4 L80,36.4 L85,36.4 L90,36.4"
+      fill="none"
+      stroke="#694e3c"
+      stroke-linecap="round"
+      stroke-width="7"
+    />
+    <path
+      d="M10,36.4 L15,36.4 L20,36.4 L25,36.4 L30,36.4 L35,36.4 L40,36.4 L45,36.4 L50,36.4 L55,36.4 L60,36.4 L65,36.4 L70,36.4 L75,36.4 L80,36.4 L85,36.4 L90,36.4"
+      fill="none"
+      stroke="#e9e4cd"
+      stroke-linecap="round"
+      stroke-width="3"
+    />
+  </g>
+</svg>
+
+ ❯ src/App.test.tsx:47:83
+     45|   render(<App/>);
+     46|   fireEvent.click(screen.getByRole("button",{name:"あそぶ"}));
+     47|   expect(screen.getByRole("button",{name:/ステージ 1 /}).querySelector(".r…
+       |                                                                                   ^
+     48| });
+     49|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/railway/model.test.ts > stage variety > has twelve routes even after removing their position on the board
+AssertionError: expected 11 to be 12 // Object.is equality
+
+- Expected
++ Received
+
+- 12
++ 11
+
+ ❯ src/railway/model.test.ts:180:38
+    178|   it("has twelve routes even after removing their position on the boar…
+    179|     const normalized=stages.map(stage=>JSON.stringify(stage.path.map(p…
+    180|     expect(new Set(normalized).size).toBe(12);
+       |                                      ^
+    181|   });
+    182| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/scene/Diorama.test.ts > aligns DOM holes with the rendered sockets after changing camera pose on resize
+AssertionError: expected 248.42625322459008 to be close to 513.2517108460243, received difference is 264.82545762143417, but expected 0.0000049999999999999996
+ ❯ src/scene/Diorama.test.ts:20:29
+     18|     const rendered=new Vector3(point.x,0.13,point.z).project(camera);
+     19|     expect(projection[0].x).toBeCloseTo((rendered.x+1)*width/2,5);
+     20|     expect(projection[0].y).toBeCloseTo((1-rendered.y)*height/2,5);
+       |                             ^
+     21|   }
+     22| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/scene/models.test.ts > keeps the entire turned locomotive outside every upcoming gap entrance
+AssertionError: journey-7/journey-7-gap-2: expected -3.445823150146164 to be less than or equal to -3.5
+ ❯ src/scene/models.test.ts:28:46
+     26|     const furthest = nx>0?bounds.max.x:nx<0?-bounds.min.x:nz>0?bounds.…
+     27|     const plane = (point.x+previous.x)/2*nx+(point.z+previous.z)/2*nz;
+     28|     expect(furthest,`${stage.id}/${gap.id}`).toBeLessThanOrEqual(plane…
+       |                                              ^
+     29|   }
+     30| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  4 failed | 13 passed (17)
+   Start at  17:12:54
+   Duration  2.12s (environment 55%, transform 15%, tests 15%, setup 8%, import 7%, worker 1%)

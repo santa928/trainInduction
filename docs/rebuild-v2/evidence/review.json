@@ -1,0 +1,39 @@
+{
+  "reviewer": "independent fresh-context code review",
+  "base": "d7fe410812c9f0e56f6abf49896219630fa5d89e",
+  "findings": [
+    {
+      "issue": "stale camera projection after responsive pose change",
+      "grade": "important",
+      "status": "fixed; regression failed before fix"
+    },
+    {
+      "issue": "rotated locomotive bumper crossing missing tile entrance",
+      "grade": "important",
+      "status": "fixed; actual mesh bounds checked at every gap"
+    },
+    {
+      "issue": "stage-card picture reveals first answer",
+      "grade": "important",
+      "status": "fixed; neutral destination stamp"
+    },
+    {
+      "issue": "translated duplicate path in stages 7/9",
+      "grade": "minor in review, important under stage-quality requirement",
+      "status": "fixed; redesigned stage 9, translation-normalized uniqueness test"
+    }
+  ],
+  "additional_projection_fix": "non-overlap test caught oversized desktop squares; fixed with 44px minimum retained",
+  "deferred_minors": [],
+  "not_judged": [
+    "actual iOS behavior",
+    "audio playback quality",
+    "hardware GPU performance",
+    "preschool difficulty acceptance"
+  ],
+  "additional_fixes": [
+    "Exhaustive finite-piece graph search found a station-reaching alternative in stage 12; distractor changed, all arrangements checked.",
+    "390x664 WebKit overlap reproduced and corrected with a shallower short-board camera.",
+    "Pause/resume without intervening animation frames reproduced a 60-second clock charge; reset frame clock on pause transitions."
+  ]
+}

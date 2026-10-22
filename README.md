@@ -1,61 +1,56 @@
 # レールをつなごう！
 
-3歳児向けの電車誘導ブラウザゲームです。欠けた線路に正しいレールピースを置き、自動で走る電車をゴール駅まで導きます。
+幼児向けの、時間制限のある電車誘導ゲームです。形と向きの合うレールを選んで穴に置き、自動で走る電車を駅へ導きます。Three.jsによる玩具のジオラマと、タッチ中心の操作へ全面再構築しました。
 
-## 技術構成
+## 遊び方
 
-- React
-- TypeScript
-- Vite
-- Vitest
-- Playwright
-- GitHub Pages 向け静的ビルド
+1. 好きな電車を選び、「あそぶ」から旅を選びます。3電車で共通の独自12ステージです。
+2. 3秒の準備時間のあとに自動発車します。下の候補をタップしてから穴をタップします。ドラッグして置くこともできます。
+3. 到達前なら、置いたレールをタップして戻したり、別の候補で上書きできます。
+4. 未配置・誤配置の穴へ到達すると、電車が進入する手前で止まって失敗します。配置した時点で正解を教える表示はありません。
+5. リトライは配置をすべて戻して最初から。候補の位置はリトライ中も固定です。正解順に並ぶ仕組みはありません。
+6. 到着すると次のステージが解放されます。画面を離れると停止し、「つづける」で再開します。
+
+音は右上のスピーカーで切り替えられます。音なしでも遊べます。端末の「動きを減らす」設定では煙・紙吹雪などの装飾を抑えます。WebGL2が使えない場合は再読込の案内を表示し、時計は開始しません。
+
+## 実装
+
+- React / TypeScript / Vite / Three.js。追加の実行時依存はThree.jsのみ。
+- `src/railway/model.ts`: 接続、経路、走行、配置、失敗/クリアの純粋ロジック。
+- `src/railway/stages.ts`: 独立した12経路と有限ピース。形→向き→連続する穴の読み取りへ進みます。
+- `src/scene/`: 同じ経路関数を使うジオラマ描画。物理エンジン・外部3D素材・外部APIは使いません。
+- `src/components/RailwayGame.tsx`: タップ/Pointer Events、停止、結果画面。
+- `src/railway/progress.ts`: 新形式の保存と旧進捗の非破壊移行。
+
+旧ロジック・画像・CSS・設計資料は比較と復元のため残しています。旧E2Eは `tests/legacy-e2e/` へ移し、現行画面のE2Eは `tests/e2e/rebuild-v2.spec.ts` です。
+
+## 保存データ
+
+旧キー `train-induction-progress` は削除・上書きしません。新キーは `train-induction-progress-v2` です。旧版の最高クリア難易度1〜5に応じて、新ステージ3/5/8/10/12までを解放します。旧クリア実績を別内容の新面のクリア認定には変換しません。保存不能・破損時でもプレイできます。
 
 ## ローカル開発
 
-ホスト環境を汚さないため、Node.js の実行は Docker コンテナ内で行います。`npm`、`npx`、`pnpm`、`yarn` はホストで実行しないでください。
+Node/npmはDockerコンテナ内で実行します。ホストでnpm/npx/pnpm/yarnを実行しないでください。Node 22.12以上（検証はNode 22）を使用します。
 
 ```bash
-docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app node:22-bookworm npm ci
+docker run --rm -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app node:22-bookworm npm ci
 docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app -p 5173:5173 node:22-bookworm npm run dev
 ```
 
-開発サーバーは `http://localhost:5173/trainInduction/` で確認できます。
+`http://localhost:5173/trainInduction/` を開きます。管理クラウド環境では、環境のプロキシとCAをそのまま使い、必要ならCAを読み取り専用でコンテナにマウントして `NODE_EXTRA_CA_CERTS` を指定します。TLS検証は無効にしません。
 
 ## 検証
 
 ```bash
-docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app node:22-bookworm npm run build
-docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app node:22-bookworm npm test
-docker run --rm -it -e npm_config_cache=/tmp/.npm -v "$PWD":/app -w /app mcr.microsoft.com/playwright:v1.59.1-noble npm run test:e2e
+docker run --rm -v "$PWD":/app -w /app node:22-bookworm npm test
+docker run --rm -v "$PWD":/app -w /app node:22-bookworm npm run build
+docker run --rm -e LIBGL_ALWAYS_SOFTWARE=1 -e WEBKIT_DISABLE_DMABUF_RENDERER=1 -v "$PWD":/app -w /app mcr.microsoft.com/playwright:v1.59.1-noble npm run test:e2e
 ```
 
-`npm test` は Vitest の単体・コンポーネントテスト用です。`vitest.config.ts` で `tests/e2e/**` を除外しているため、E2E テストは `npm run test:e2e` で実行します。
+Playwrightのコンテナ版はlockfileの `@playwright/test` と合わせます。全12面の実時間クリアはChromiumで検証します。WebKitはタッチ操作相当・失敗/リトライ・保存・画面寸法を検証し、実機Safariと区別します。`lint` は型検査の別名であり、build内の型検査とは別のlintを実行しているわけではありません。
 
-Playwright の Docker image は、`package-lock.json` で解決されている `@playwright/test` のバージョンと合わせます。現在は `1.59.1` のため、`mcr.microsoft.com/playwright:v1.59.1-noble` を使います。
+[2026-10-22の設計](docs/superpowers/specs/2026-10-22-threejs-rebuild.md)と[検証結果](docs/rebuild-v2-results.md)を参照してください。[旧版の評価資料](docs/rebuild-assessment.md)は当時の記録として保持しています。
 
-## 操作
+## 公開
 
-1. 電車を選びます。
-2. 解放済みのコースを選びます。
-3. 下のレールピースを選び、穴になっている線路へ置きます。
-4. 電車が正しい線路を通るとゴールへ進みます。
-5. クリアすると次のコースが解放されます。
-
-置いたレールは、電車が通る前ならタップして候補欄に戻し、置き直せます。通過後のレールは固定されます。使用済み候補の場所には「おいたよ」が残り、ほかの候補の位置が変わらないようにしています。クリア済みコースには「クリア！」を表示します。
-
-画面下の案内は「レールをえらんでね」から、選択後に「あなをタップしてね」へ変わります。横長の画面では盤面と操作欄を左右に配置します。画面が小さい場合はスクロールして操作でき、結果画面も全ボタンに移動できます。
-
-## 再構築の記録
-
-[要件・現状分析・受け入れ条件](docs/rebuild-assessment.md)に、維持する体験と修正範囲を記載しています。E2Eには、実時間のクリアと保存、進捗fixtureで開いた後半コースの寸法・候補位置、横向きの結果画面を含みます。fixtureによる表示確認は、全コースの実プレイ完走とは区別します。
-
-## GitHub Pages 向け静的ビルド
-
-このプロジェクトは Vite の `base` を `/trainInduction/` に設定しているため、GitHub Pages のプロジェクトページ配下で配信する前提の静的ビルドになります。
-
-```bash
-docker run --rm -it -u "$(id -u):$(id -g)" -v "$PWD":/app -w /app node:22-bookworm npm run build
-```
-
-ビルド成果物は `dist/` に出力されます。GitHub Pages では、この `dist/` の中身を配布物として公開します。
+Viteのbaseは `/trainInduction/`、成果物は `dist/` です。この再構築ではGitHub Pagesの実行を手動操作に限定し、公開ジョブでも同じcheckoutのテスト/ビルドを通してから配布します。本人確認前のmainマージ・公開版の置換は行いません。
