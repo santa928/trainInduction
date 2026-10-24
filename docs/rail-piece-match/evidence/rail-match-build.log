@@ -16,4 +16,4 @@ dist/assets/Diorama-5mbO2_Ur.js  553.40 kB │ gzip: 140.85 kB
 - Using dynamic import() to code-split the application
 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 3.49s
+✓ built in 2.97s

@@ -115,12 +115,15 @@ test("rail previews remain distinct and follow the board viewpoint on resize", a
     await page.setViewportSize(viewport);
     await expect.poll(sources).not.toEqual(before);
     await expect(page.locator("canvas")).toHaveCount(1);
-    const buffer = await page.locator("canvas").evaluate((canvas) => ({
-      width: canvas.width,
-      height: canvas.height,
-      expectedWidth: canvas.clientWidth * Math.min(devicePixelRatio, 1.75),
-      expectedHeight: canvas.clientHeight * Math.min(devicePixelRatio, 1.75),
-    }));
+    const buffer = await page.locator("canvas").evaluate((element) => {
+      const canvas = element as HTMLCanvasElement;
+      return {
+        width: canvas.width,
+        height: canvas.height,
+        expectedWidth: canvas.clientWidth * Math.min(devicePixelRatio, 1.75),
+        expectedHeight: canvas.clientHeight * Math.min(devicePixelRatio, 1.75),
+      };
+    });
     expect(Math.abs(buffer.width - buffer.expectedWidth)).toBeLessThan(2);
     expect(Math.abs(buffer.height - buffer.expectedHeight)).toBeLessThan(2);
   }

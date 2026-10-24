@@ -23,4 +23,4 @@
 - Chromiumの実タッチ入力相当: 12面目を5ピース配置→3画面サイズへ変更→実時間で駅到着。配置・時計・クリア状態は直接書き換えず、後半面の解放だけ旧保存fixtureを使用。画像を目視比較した。
 - 実機iPhone/iPad、端末の性能、幼児による識別しやすさの受け入れ確認は未実施。
 
-ログは [evidence](evidence/) に保存。今回のブランチではmainへのマージ・push・公開を行っていない。残作業は修正画面のユーザー確認後のmain反映・GitHub Pages更新。
+ログは [evidence](evidence/) に保存。この記録は公開前のローカル検証結果。修正画面の確認後、ユーザーからmain反映とGitHub Pages更新の承認を得た。公開は[公開ワークフロー](https://github.com/santa928/trainInduction/actions/workflows/pages.yml)の検証完了後に実施する。
