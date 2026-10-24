@@ -1,0 +1,11 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test --grep missing rail fails --project chromium-touch --repeat-each=2
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:200:1 › missing rail fails, rapid select is harmless, and progress survives reload (42.6s)
+  ✓  2 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:200:1 › missing rail fails, rapid select is harmless, and progress survives reload (42.8s)
+
+  2 passed (1.5m)

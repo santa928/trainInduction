@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useReducer,
   useRef,
   useState,
@@ -99,6 +100,12 @@ export function RailwayGame({
       window.removeEventListener("keydown", key);
     };
   }, [pause]);
+  useLayoutEffect(() => {
+    if (run.status === "cleared" && !notified.current) {
+      notified.current = true;
+      onClear(stage.id);
+    }
+  }, [run.status, onClear, stage.id]);
   useEffect(() => {
     if (run.status !== previous.current) {
       if (run.status === "running") audio.depart();
@@ -112,10 +119,6 @@ export function RailwayGame({
       }
       previous.current = run.status;
     }
-    if (run.status === "cleared" && !notified.current) {
-      notified.current = true;
-      onClear(stage.id);
-    }
     if (
       run.status === "running" &&
       !run.paused &&
@@ -124,7 +127,7 @@ export function RailwayGame({
       lastChug.current = Math.floor(run.distance * 3);
       audio.chug();
     }
-  }, [run.status, run.distance, run.paused, audio, onClear, stage.id]);
+  }, [run.status, run.distance, run.paused, audio]);
   useEffect(() => {
     if (modal) {
       setSelected(null);
