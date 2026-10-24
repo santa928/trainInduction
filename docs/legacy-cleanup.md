@@ -1,6 +1,6 @@
 # 旧実装の整理（2026-10-24）
 
-基点: 公開済みmain `05df6d3`。ブランチ: `refactor/remove-legacy`。整理の実装・検証への承認に基づく変更で、マージ・push・公開は含まない。
+実装・検証時の基点: 公開済みmain `05df6d3`。確認ブランチ: `refactor/remove-legacy`（`1980a5b`）。以下は公開前の整理・検証記録。その後、追加承認を受けてmainへ統合した。配信の実行状況は [Pagesワークフロー](https://github.com/santa928/trainInduction/actions/workflows/pages.yml)、最終コミットの検証は [CI](https://github.com/santa928/trainInduction/actions/workflows/ci.yml)で確認できる。
 
 ## 削除したもの
 
