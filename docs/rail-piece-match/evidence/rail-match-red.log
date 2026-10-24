@@ -1,0 +1,43 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test --grep rail previews remain --project chromium-touch
+
+
+Running 1 test using 1 worker
+
+  ✘  1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:59:1 › rail previews remain distinct and follow the board viewpoint on resize (16.0s)
+
+
+  1) [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:59:1 › rail previews remain distinct and follow the board viewpoint on resize
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.rail-choice img.rail-icon')
+    Expected: 6
+    Received: 0
+    Timeout:  12000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 12000ms
+      - waiting for locator('.rail-choice img.rail-icon')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      61 |   await page.getByRole("button", {name:"ひとやすみ", exact:true}).tap();
+      62 |   const images = page.locator(".rail-choice img.rail-icon");
+    > 63 |   await expect(images).toHaveCount(6);
+         |                        ^
+      64 |   const sources = () => images.evaluateAll(elements => elements.map(element => (element as HTMLImageElement).src));
+      65 |   await expect.poll(() => images.evaluateAll(elements => elements.every(element => (element as HTMLImageElement).naturalWidth > 0))).toBe(true);
+      66 |   const initial = await sources();
+        at /app/tests/e2e/rebuild-v2.spec.ts:63:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/rebuild-v2-rail-previews-r-e138f-e-board-viewpoint-on-resize-chromium-touch/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/rebuild-v2-rail-previews-r-e138f-e-board-viewpoint-on-resize-chromium-touch/error-context.md
+
+  1 failed
+    [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:59:1 › rail previews remain distinct and follow the board viewpoint on resize

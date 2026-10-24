@@ -56,6 +56,81 @@ async function fillStage(page: Page, number: number) {
   }
 }
 
+test("rail previews remain distinct and follow the board viewpoint on resize", async ({
+  page,
+}, info) => {
+  await openStage(page, 12, true);
+  await page.getByRole("button", { name: "ひとやすみ", exact: true }).tap();
+  const images = page.locator(".rail-choice img.rail-icon");
+  await expect(images).toHaveCount(6);
+  const sources = () =>
+    images.evaluateAll((elements) =>
+      elements.map((element) => (element as HTMLImageElement).src),
+    );
+  await expect
+    .poll(() =>
+      images.evaluateAll((elements) =>
+        elements.every(
+          (element) => (element as HTMLImageElement).naturalWidth > 0,
+        ),
+      ),
+    )
+    .toBe(true);
+  const initial = await sources();
+  const rails = await page
+    .locator(".rail-choice")
+    .evaluateAll((elements) =>
+      elements.map((element) => (element as HTMLElement).dataset.rail),
+    );
+  expect(new Set(initial).size).toBe(new Set(rails).size);
+  const coverage = await images.evaluateAll((elements) =>
+    elements.map((element) => {
+      const image = element as HTMLImageElement;
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext("2d")!;
+      context.drawImage(image, 0, 0);
+      const pixels = context.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+      ).data;
+      let visible = 0;
+      for (let i = 3; i < pixels.length; i += 4) if (pixels[i] > 128) visible++;
+      return visible / (canvas.width * canvas.height);
+    }),
+  );
+  for (const fraction of coverage) {
+    expect(fraction).toBeGreaterThan(0.2);
+    expect(fraction).toBeLessThan(0.9);
+  }
+  for (const viewport of [
+    { width: 1280, height: 720 },
+    { width: 390, height: 844 },
+    { width: 390, height: 664 },
+  ]) {
+    const before = await sources();
+    await page.setViewportSize(viewport);
+    await expect.poll(sources).not.toEqual(before);
+    await expect(page.locator("canvas")).toHaveCount(1);
+    const buffer = await page.locator("canvas").evaluate((element) => {
+      const canvas = element as HTMLCanvasElement;
+      return {
+        width: canvas.width,
+        height: canvas.height,
+        expectedWidth: canvas.clientWidth * Math.min(devicePixelRatio, 1.75),
+        expectedHeight: canvas.clientHeight * Math.min(devicePixelRatio, 1.75),
+      };
+    });
+    expect(Math.abs(buffer.width - buffer.expectedWidth)).toBeLessThan(2);
+    expect(Math.abs(buffer.height - buffer.expectedHeight)).toBeLessThan(2);
+  }
+  await expect.poll(sources).toEqual(initial);
+  await page.screenshot({ path: info.outputPath("matching-rails.png") });
+});
+
 for (const stage of stages)
   test(`real-time clear ${stage.number}: ${stage.title}`, async ({
     page,

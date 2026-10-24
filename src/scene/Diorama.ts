@@ -17,6 +17,7 @@ import {
   type Stage,
 } from "../railway/model";
 import type { Train } from "../railway/stages";
+import { railPreviews, type RailImages } from "./railPreviews";
 
 export interface Projection {
   id: string;
@@ -30,6 +31,7 @@ interface Options {
   train: Train;
   preview?: boolean;
   onProjection: (points: Projection[]) => void;
+  onRailImages?: (images: RailImages) => void;
   onContextLost: () => void;
   onContextRestored: () => void;
 }
@@ -270,6 +272,16 @@ export class Diorama {
     });
     this.camera.updateProjectionMatrix();
     this.camera.updateMatrixWorld();
+    if (!this.options.preview && this.options.onRailImages)
+      this.options.onRailImages(
+        railPreviews(
+          this.renderer,
+          this.camera,
+          this.scene.children.filter(
+            (object): object is THREE.Light => object instanceof THREE.Light,
+          ),
+        ),
+      );
     this.projected = this.options.stage.gaps.map((gap) => {
       const point = this.options.stage.path[gap.pathIndex];
       const projected = new THREE.Vector3(point.x, 0.13, point.z).project(

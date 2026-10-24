@@ -1,0 +1,16 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test --grep touch drag|return, overwrite|context loss
+
+
+Running 6 tests using 1 worker
+
+  ✓  1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:214:1 › return, overwrite, resize and background pause retain state and large touch targets (36.3s)
+  ✓  2 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:321:1 › touch drag and cancellation preserve a finite inventory (5.6s)
+  ✓  3 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:372:1 › WebGL context loss pauses and restoration requires deliberate resume (4.7s)
+  ✓  4 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:214:1 › return, overwrite, resize and background pause retain state and large touch targets (9.1s)
+  -  5 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:321:1 › touch drag and cancellation preserve a finite inventory
+  -  6 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:372:1 › WebGL context loss pauses and restoration requires deliberate resume
+
+  2 skipped
+  4 passed (59.6s)
