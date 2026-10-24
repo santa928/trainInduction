@@ -1,0 +1,11 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test --project=chromium-touch --grep real-time clear 10: --repeat-each=2 --output=/evidence/cleanup-stage10-repeat --reporter=list
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 10: ゆうやけの おか (29.1s)
+  ✓  2 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 10: ゆうやけの おか (29.6s)
+
+  2 passed (1.0m)

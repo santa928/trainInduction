@@ -23,7 +23,9 @@
 - `src/components/RailwayGame.tsx`: タップ/Pointer Events、停止、結果画面。
 - `src/railway/progress.ts`: 新形式の保存と旧進捗の非破壊移行。
 
-旧ロジック・画像・CSS・設計資料は比較と復元のため残しています。旧E2Eは `tests/legacy-e2e/` へ移し、現行画面のE2Eは `tests/e2e/rebuild-v2.spec.ts` です。
+旧ロジック・画像・CSS・旧テストは削除済みです。復元はGit履歴（削除前のmain: `05df6d3`）を使います。旧保存データの移行処理は `src/railway/progress.ts` に独立して残しています。現行画面のE2Eは `tests/e2e/rebuild-v2.spec.ts` です。過去の設計・検証資料は当時の記録で、配信ビルドには入りません。
+
+リファクタリングの完了条件は [AGENTS.md](AGENTS.md) にまとめています。
 
 ## 保存データ
 
