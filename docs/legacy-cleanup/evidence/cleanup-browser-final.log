@@ -1,0 +1,73 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test
+
+
+Running 36 tests using 1 worker
+
+  ✓   1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:59:1 › rail previews remain distinct and follow the board viewpoint on resize (24.3s)
+  ✓   2 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 1: はじめの いっぽ (29.4s)
+  ✓   3 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 2: おくへ すすもう (28.3s)
+  ✓   4 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 3: くるりと まがろう (32.3s)
+  ✓   5 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 4: はなばたけの カーブ (32.1s)
+  ✓   6 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 5: かわべの ふたつ (35.5s)
+  ✓   7 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 6: はんたいむきの たび (35.2s)
+  ✓   8 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 7: くねくね さんぽ (30.6s)
+  ✓   9 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 8: みずいろの みち (29.5s)
+  ✓  10 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 9: つづく カーブ (34.3s)
+  ✘  11 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 10: ゆうやけの おか (27.5s)
+  ✓  12 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 11: さきを みてみよう (35.9s)
+  ✓  13 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 12: きみは レールめいじん (40.7s)
+  ✓  14 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:160:1 › wrong rail fails before entry, retry resets all work, and taps cannot edit behind result (18.1s)
+  ✓  15 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:200:1 › missing rail fails, rapid select is harmless, and progress survives reload (43.0s)
+  ✓  16 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:225:1 › return, overwrite, resize and background pause retain state and large touch targets (38.2s)
+  ✓  17 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:332:1 › touch drag and cancellation preserve a finite inventory (6.4s)
+  ✓  18 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:383:1 › WebGL context loss pauses and restoration requires deliberate resume (5.7s)
+  ✓  19 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:59:1 › rail previews remain distinct and follow the board viewpoint on resize (8.8s)
+  -  20 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 1: はじめの いっぽ
+  -  21 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 2: おくへ すすもう
+  -  22 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 3: くるりと まがろう
+  -  23 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 4: はなばたけの カーブ
+  -  24 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 5: かわべの ふたつ
+  -  25 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 6: はんたいむきの たび
+  -  26 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 7: くねくね さんぽ
+  -  27 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 8: みずいろの みち
+  -  28 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 9: つづく カーブ
+  -  29 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 10: ゆうやけの おか
+  -  30 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 11: さきを みてみよう
+  -  31 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 12: きみは レールめいじん
+  ✓  32 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:160:1 › wrong rail fails before entry, retry resets all work, and taps cannot edit behind result (16.3s)
+  ✓  33 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:200:1 › missing rail fails, rapid select is harmless, and progress survives reload (41.8s)
+  ✓  34 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:225:1 › return, overwrite, resize and background pause retain state and large touch targets (11.5s)
+  -  35 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:332:1 › touch drag and cancellation preserve a finite inventory
+  -  36 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:383:1 › WebGL context loss pauses and restoration requires deliberate resume
+
+
+  1) [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 10: ゆうやけの おか ──────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      34 |   expect(point.width).toBeGreaterThan(0);
+      35 |   expect(point.height).toBeGreaterThan(0);
+    > 36 |   expect(point.hit).toBe(true);
+         |                     ^
+      37 |   await page.touchscreen.tap(point.x, point.y);
+      38 | }
+      39 | async function fillStage(page: Page, number: number) {
+        at touch (/app/tests/e2e/rebuild-v2.spec.ts:36:21)
+        at fillStage (/app/tests/e2e/rebuild-v2.spec.ts:51:5)
+        at /app/tests/e2e/rebuild-v2.spec.ts:145:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/rebuild-v2-real-time-clear-10-ゆうやけの-おか-chromium-touch/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/rebuild-v2-real-time-clear-10-ゆうやけの-おか-chromium-touch/error-context.md
+
+  1 failed
+    [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:135:3 › real-time clear 10: ゆうやけの おか ───────────
+  14 skipped
+  21 passed (10.3m)

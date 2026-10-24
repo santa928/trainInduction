@@ -1,0 +1,35 @@
+
+> train-induction@0.1.0 test
+> vitest run
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.5 [39m[90m/app[39m
+
+ [32m✓[39m src/scene/models.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 478[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps the entire turned locomotive outside every upcoming gap entrance[33m 358[2mms[22m[39m
+ [32m✓[39m src/scene/station.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1100[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps each station beside the track, including the curved approaches[33m 549[2mms[22m[39m
+   [33m[2m✓[22m[39m keeps station roofs, clocks and signs inside each supported camera view[33m 546[2mms[22m[39m
+ [32m✓[39m src/App.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 921[2mms[22m[39m
+   [33m[2m✓[22m[39m chooses a train and opens the shared stage map with progression locks[33m 471[2mms[22m[39m
+ [32m✓[39m src/components/GameScreen.test.tsx [2m([22m[2m13 tests[22m[2m)[22m[33m 988[2mms[22m[39m
+ [32m✓[39m src/railway/model.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m src/App.persistence.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 567[2mms[22m[39m
+   [33m[2m✓[22m[39m persists arrival before returning to the result screen[33m 563[2mms[22m[39m
+ [32m✓[39m src/components/DioramaView.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 67[2mms[22m[39m
+ [32m✓[39m src/components/ResultOverlay.test.tsx [2m([22m[2m1 test[22m[2m)[22m[32m 220[2mms[22m[39m
+ [32m✓[39m src/data/validateCourses.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m src/railway/solutions.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m src/game/gameReducer.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m src/railway/progress.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/scene/Diorama.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m src/storage/progressStorage.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m14 passed[39m[22m[90m (14)[39m
+[2m      Tests [22m [1m[32m81 passed[39m[22m[90m (81)[39m
+[2m   Start at [22m 13:24:36
+[2m   Duration [22m 6.31s[2m (environment 56%, tests 22%, import 9%, setup 8%, transform 3%, worker 1%)[22m
+
+[2mEnvironment [22m [33mjsdom was created 14 times[39m[2m · 11.28s total, 56% of tracked time[22m
+[2m            [22m [2mcreate it once per worker with [22m[33mpool: 'vmThreads'[39m[2m (keeps per-file isolation) or [22m[33misolate: false[39m[2m (shares it across files)[22m
+[2m            [22m [2mlearn more: https://vitest.dev/guide/improving-performance#test-environments[22m

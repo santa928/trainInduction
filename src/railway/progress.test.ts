@@ -7,18 +7,27 @@ import {
 } from "./progress";
 
 beforeEach(() => localStorage.clear());
-it("migrates legacy reach without inventing new clears or touching the old key", () => {
-  const raw = JSON.stringify({
-    clearedCourseIds: ["mori-3", "sora-1", "not-a-course"],
-  });
-  localStorage.setItem("train-induction-progress", raw);
-  const progress = loadJourney();
-  expect(progress.unlockedThrough).toBe(8);
-  expect(progress.clearedStageIds).toEqual([]);
-  saveJourney(progress);
-  expect(localStorage.getItem("train-induction-progress")).toBe(raw);
-  expect(loadJourney()).toEqual(progress);
-});
+it.each([
+  [1, 3],
+  [2, 5],
+  [3, 8],
+  [4, 10],
+  [5, 12],
+])(
+  "migrates legacy difficulty %i to stage %i without changing old saves or inventing clears",
+  (difficulty, unlockedThrough) => {
+    const raw = JSON.stringify({
+      clearedCourseIds: [`mori-${difficulty}`, "sora-1", "not-a-course"],
+    });
+    localStorage.setItem("train-induction-progress", raw);
+    const progress = loadJourney();
+    expect(progress.unlockedThrough).toBe(unlockedThrough);
+    expect(progress.clearedStageIds).toEqual([]);
+    saveJourney(progress);
+    expect(localStorage.getItem("train-induction-progress")).toBe(raw);
+    expect(loadJourney()).toEqual(progress);
+  },
+);
 it("roundtrips clear, unlock, train and sound and deduplicates repeated clear", () => {
   const progress = completeJourney(
     { ...loadJourney(), trainId: "niji", sound: false },
