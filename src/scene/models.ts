@@ -1,6 +1,13 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
-import { ends, sampleRail, type Rail } from "../railway/model";
+import {
+  ends,
+  routeTiles,
+  sampleRail,
+  sampleRoute,
+  type Rail,
+  type Stage,
+} from "../railway/model";
 import type { Train } from "../railway/stages";
 
 const materials = new Map<string, THREE.MeshStandardMaterial>();
@@ -180,36 +187,144 @@ export function treeModel(color: string, size = 1) {
 
 export function stationModel() {
   const station = new THREE.Group();
-  const platform = box(1.22, 0.13, 0.65, "#d9c4a2", 0.05);
+  const platform = box(1.8, 0.13, 0.78, "#d9c4a2", 0.05);
   platform.position.y = 0.08;
   station.add(platform);
-  const wall = box(0.88, 0.58, 0.5, "#fff0cd", 0.035);
-  wall.position.y = 0.41;
+  const safety = box(1.6, 0.015, 0.055, "#f4cf66", 0.008);
+  safety.position.set(0, 0.153, 0.33);
+  station.add(safety);
+  const wall = box(0.8, 0.5, 0.4, "#fff0cd", 0.035);
+  wall.position.set(-0.22, 0.37, -0.16);
   station.add(wall);
   for (const side of [-1, 1]) {
-    const roof = box(1.12, 0.075, 0.46, "#c77c65", 0.025);
+    const roof = box(1.1, 0.07, 0.35, "#c77c65", 0.025);
     roof.rotation.x = side * 0.55;
-    roof.position.set(0, 0.82, side * 0.18);
+    roof.position.set(-0.22, 0.72, -0.16 + side * 0.14);
     station.add(roof);
   }
-  const ridge = box(1.16, 0.06, 0.07, "#b06d58", 0.025);
-  ridge.position.y = 0.95;
+  const ridge = box(1.13, 0.06, 0.07, "#b06d58", 0.025);
+  ridge.position.set(-0.22, 0.85, -0.16);
   station.add(ridge);
-  for (const x of [-0.26, 0.26]) {
-    const window = box(0.19, 0.22, 0.02, "#88b9bc", 0.025);
-    window.position.set(x, 0.44, 0.26);
+  for (const x of [-0.49, 0.05]) {
+    const window = box(0.16, 0.2, 0.02, "#88b9bc", 0.025);
+    window.position.set(x, 0.42, 0.06);
     station.add(window);
   }
   const door = box(0.18, 0.34, 0.025, "#a18865", 0.02);
-  door.position.set(0, 0.32, 0.26);
+  door.position.set(-0.22, 0.32, 0.055);
   station.add(door);
-  const clock = cylinder(0.105, 0.025, "#fff9e9");
-  clock.rotation.x = Math.PI / 2;
-  clock.position.set(0, 0.67, 0.3);
+  const canopy = box(1.45, 0.075, 0.55, "#618f88", 0.035);
+  canopy.position.set(-0.15, 0.61, 0.05);
+  station.add(canopy);
+  for (const x of [-0.74, 0.44]) {
+    const post = box(0.045, 0.45, 0.045, "#52786d", 0.012);
+    post.position.set(x, 0.37, 0.25);
+    station.add(post);
+  }
+  const bench = box(0.34, 0.07, 0.12, "#a57f53", 0.025);
+  bench.position.set(-0.56, 0.24, 0.18);
+  station.add(bench);
+  const back = box(0.34, 0.2, 0.035, "#a57f53", 0.015);
+  back.position.set(-0.56, 0.31, 0.13);
+  station.add(back);
+
+  // Tilt the train sign and clock toward the overhead camera; reading is optional.
+  const sign = new THREE.Group();
+  sign.add(box(0.62, 0.3, 0.04, "#fff9e9", 0.035));
+  const body = box(0.36, 0.115, 0.025, "#4daec5", 0.02);
+  body.position.set(0.02, -0.025, 0.033);
+  sign.add(body);
+  const cabin = box(0.14, 0.18, 0.025, "#237a96", 0.015);
+  cabin.position.set(-0.12, 0.02, 0.035);
+  sign.add(cabin);
+  const glass = box(0.07, 0.075, 0.025, "#bfe2e0", 0.01);
+  glass.position.set(-0.12, 0.045, 0.055);
+  sign.add(glass);
+  const chimney = box(0.04, 0.07, 0.03, "#237a96", 0.008);
+  chimney.position.set(0.12, 0.06, 0.04);
+  sign.add(chimney);
+  for (const x of [-0.12, 0.12]) {
+    const wheel = cylinder(0.035, 0.025, "#40524b", 12);
+    wheel.rotation.x = Math.PI / 2;
+    wheel.position.set(x, -0.1, 0.045);
+    sign.add(wheel);
+  }
+  sign.rotation.x = -Math.PI / 4;
+  sign.position.set(-0.04, 0.96, 0.14);
+  station.add(sign);
+  const pole = box(0.035, 0.65, 0.035, "#52786d", 0.01);
+  pole.position.set(0.67, 0.45, 0.19);
+  station.add(pole);
+  const clock = new THREE.Group();
+  clock.add(cylinder(0.2, 0.045, "#52786d"));
+  const face = cylinder(0.17, 0.05, "#fff9e9");
+  clock.add(face);
+  const hour = box(0.025, 0.012, 0.1, "#40524b", 0.006);
+  hour.position.set(0, 0.031, -0.035);
+  clock.add(hour);
+  const minute = box(0.11, 0.012, 0.022, "#40524b", 0.006);
+  minute.position.set(0.04, 0.032, 0);
+  clock.add(minute);
+  clock.rotation.x = Math.PI / 4;
+  clock.position.set(0.67, 0.78, 0.19);
   station.add(clock);
-  const hand = box(0.012, 0.07, 0.02, "#625b48", 0.003);
-  hand.position.set(0, 0.69, 0.32);
-  station.add(hand);
+  return station;
+}
+
+/** Place a platform along the arrival track, preferring space inside the toy board. */
+export function stationForStage(stage: Stage) {
+  const station = stationModel();
+  const goal = stage.path.at(-1)!,
+    previous = stage.path.at(-2)!;
+  const direction = { x: goal.x - previous.x, z: goal.z - previous.z };
+  const normal = { x: -direction.z, z: direction.x };
+  const total = routeTiles(stage).at(-1)!.end;
+  let bestScore = -Infinity,
+    bestPosition = new THREE.Vector3(),
+    bestRotation = 0,
+    bestScale = 1;
+  for (const [scale, along] of [
+    [1, -0.4],
+    [1, 0.35],
+    [0.8, 0.1],
+  ] as const)
+    for (const side of [-1, 1]) {
+      station.scale.x = scale;
+      station.position.set(
+        goal.x + direction.x * along + normal.x * side * 0.82,
+        0,
+        goal.z + direction.z * along + normal.z * side * 0.82,
+      );
+      station.rotation.y = Math.atan2(-normal.x * side, -normal.z * side);
+      const bounds = new THREE.Box3().setFromObject(station);
+      let clearance = Infinity;
+      for (let distance = 0; distance <= total; distance += 0.125) {
+        const point = sampleRoute(stage, distance);
+        clearance = Math.min(
+          clearance,
+          bounds.distanceToPoint(new THREE.Vector3(point.x, 0.13, point.z)),
+        );
+      }
+      const overflow = Math.max(
+        0,
+        -0.825 - bounds.min.x,
+        bounds.max.x - 5.825,
+        -0.825 - bounds.min.z,
+        bounds.max.z - 5.825,
+      );
+      // The camera looks from the south. Keep roofs and signs behind the rails.
+      const foreground = normal.z * side > 0 ? 0.5 : 0;
+      const score = clearance - overflow - foreground - (scale < 1 ? 0.025 : 0);
+      if (score > bestScore) {
+        bestScore = score;
+        bestPosition.copy(station.position);
+        bestRotation = station.rotation.y;
+        bestScale = scale;
+      }
+    }
+  station.position.copy(bestPosition);
+  station.rotation.y = bestRotation;
+  station.scale.x = bestScale;
   return station;
 }
 
