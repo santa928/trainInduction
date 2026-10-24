@@ -1,0 +1,38 @@
+
+> train-induction@0.1.0 test
+> vitest run src/App.persistence.test.tsx
+
+
+ RUN  v5.0.5 /app
+
+ ❯ src/App.persistence.test.tsx (1 test | 1 failed) 180ms
+   × persists arrival before returning to the result screen 176ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/App.persistence.test.tsx > persists arrival before returning to the result screen
+AssertionError: expected [] to deeply equal [ 'journey-1' ]
+
+- Expected
++ Received
+
+- [
+-   "journey-1",
+- ]
++ []
+
+ ❯ src/App.persistence.test.tsx:26:33
+     24|   fireEvent.click(screen.getByRole("button", {name:"Notify arrival"}));
+     25|   const saved = JSON.parse(completed.saved!);
+     26|   expect(saved.clearedStageIds).toEqual(["journey-1"]);
+       |                                 ^
+     27|   expect(saved.unlockedThrough).toBe(2);
+     28|   app.unmount();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  05:59:52
+   Duration  1.26s (environment 51%, tests 17%, import 12%, transform 10%, setup 8%, worker 1%)

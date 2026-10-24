@@ -54,8 +54,12 @@ export default function App() {
     setJourney((p) => ({ ...p, sound: !p.sound }));
   };
   const clear = useCallback(
-    (id: string) => setJourney((p) => completeJourney(p, id)),
-    [],
+    (id: string) => {
+      const completed = completeJourney(journey, id);
+      saveJourney(completed);
+      setJourney(completed);
+    },
+    [journey],
   );
   const play = (index: number) => {
     void audio.unlock();
