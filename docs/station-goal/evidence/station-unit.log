@@ -1,0 +1,35 @@
+
+> train-induction@0.1.0 test
+> vitest run
+
+
+ RUN  v5.0.5 /app
+
+ ✓ src/scene/models.test.ts (2 tests) 468ms
+   ✓ keeps the entire turned locomotive outside every upcoming gap entrance 317ms
+ ✓ src/scene/station.test.ts (2 tests) 747ms
+   ✓ keeps each station beside the track, including the curved approaches 393ms
+   ✓ keeps station roofs, clocks and signs inside each supported camera view 352ms
+ ✓ src/App.test.tsx (4 tests) 700ms
+   ✓ chooses a train and opens the shared stage map with progression locks 329ms
+ ✓ src/components/GameScreen.test.tsx (13 tests) 774ms
+ ✓ src/App.persistence.test.tsx (1 test) 355ms
+   ✓ persists arrival before returning to the result screen 351ms
+ ✓ src/data/validateCourses.test.ts (14 tests) 20ms
+ ✓ src/components/ResultOverlay.test.tsx (1 test) 161ms
+ ✓ src/components/DioramaView.test.tsx (1 test) 50ms
+ ✓ src/railway/model.test.ts (10 tests) 41ms
+ ✓ src/game/gameReducer.test.ts (18 tests) 13ms
+ ✓ src/railway/solutions.test.ts (1 test) 22ms
+ ✓ src/storage/progressStorage.test.ts (8 tests) 15ms
+ ✓ src/scene/Diorama.test.ts (2 tests) 8ms
+ ✓ src/railway/progress.test.ts (4 tests) 11ms
+
+ Test Files  14 passed (14)
+      Tests  81 passed (81)
+   Start at  06:24:34
+   Duration  4.96s (environment 57%, tests 21%, import 7%, setup 7%, transform 6%, worker 1%)
+
+Environment  jsdom was created 14 times · 9.10s total, 57% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments

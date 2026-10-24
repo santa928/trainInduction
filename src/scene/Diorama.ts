@@ -5,7 +5,7 @@ import {
   railModel,
   trainModel,
   treeModel,
-  stationModel,
+  stationForStage,
   flagModel,
   disposeObject,
 } from "./models";
@@ -180,13 +180,9 @@ export class Diorama {
       }
     });
     const goal = stage.path.at(-1)!;
-    const station = stationModel();
-    station.position.set(
-      goal.x + (goal.z === 0 ? 0.8 : 0),
-      0,
-      goal.z - (goal.z === 0 ? 0 : 0.78),
-    );
+    const station = stationForStage(stage);
     this.scene.add(station);
+    const stationBounds = new THREE.Box3().setFromObject(station);
     this.flag.position.set(goal.x + 0.65, 0, goal.z - 0.5);
     this.scene.add(this.flag);
     const start = stage.path[0];
@@ -201,7 +197,7 @@ export class Diorama {
       for (let x = 0; x <= 5; x++) {
         if (
           stage.path.some((p) => Math.hypot(p.x - x, p.z - z) < 1.12) ||
-          Math.hypot(goal.x - x, goal.z - 0.78 - z) < 1
+          stationBounds.distanceToPoint(new THREE.Vector3(x, 0.13, z)) < 0.3
         )
           continue;
         const value = (x * 7 + z * 11 + stage.number * 3) % 9;
