@@ -19,6 +19,7 @@ import {
 import type { Train } from "../railway/stages";
 import type { RailwayAudio } from "../railway/audio";
 import type { Projection } from "../scene/Diorama";
+import type { RailImages } from "../scene/railPreviews";
 import { DioramaView } from "./DioramaView";
 import { RailIcon } from "./RailIcon";
 import { TrainBadge } from "./TrainBadge";
@@ -55,6 +56,7 @@ export function RailwayGame({
   );
   const [selected, setSelected] = useState<string | null>(null);
   const [projection, setProjection] = useState<Projection[]>([]);
+  const [railImages, setRailImages] = useState<RailImages>();
   const [drag, setDrag] = useState<Drag | null>(null);
   const dragRef = useRef<Drag | null>(null);
   const runRef = useRef(run);
@@ -302,6 +304,7 @@ export function RailwayGame({
             run={run}
             train={train}
             onProjection={setProjection}
+            onRailImages={setRailImages}
             onFrame={frame}
             onReady={sceneReady}
             onInterrupt={pause}
@@ -397,7 +400,7 @@ export function RailwayGame({
                     if (e.detail === 0) select(id);
                   }}
                 >
-                  <RailIcon rail={piece.rail} />
+                  <RailIcon src={railImages?.[piece.rail]} />
                   <span className="piece-selection" aria-hidden="true" />
                 </button>
               );
@@ -418,7 +421,7 @@ export function RailwayGame({
           aria-hidden="true"
           style={{ left: drag.x, top: drag.y }}
         >
-          <RailIcon rail={dragPiece.rail} />
+          <RailIcon src={railImages?.[dragPiece.rail]} />
         </div>
       )}
       {modal && (

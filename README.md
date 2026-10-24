@@ -19,6 +19,7 @@
 - `src/railway/model.ts`: 接続、経路、走行、配置、失敗/クリアの純粋ロジック。
 - `src/railway/stages.ts`: 独立した12経路と有限ピース。形→向き→連続する穴の読み取りへ進みます。
 - `src/scene/`: 同じ経路関数を使うジオラマ描画。物理エンジン・外部3D素材・外部APIは使いません。
+- `src/scene/railPreviews.ts`: 盤面と同じ3Dモデル・照明・視点から候補画像を生成し、ドラッグ表示にも共用します。既存の描画処理で視点ごとに一度だけ生成して再利用します。
 - `src/components/RailwayGame.tsx`: タップ/Pointer Events、停止、結果画面。
 - `src/railway/progress.ts`: 新形式の保存と旧進捗の非破壊移行。
 

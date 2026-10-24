@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Run } from "../railway/model";
 import type { Train } from "../railway/stages";
 import type { Diorama, Projection } from "../scene/Diorama";
+import type { RailImages } from "../scene/railPreviews";
 
 interface Props {
   run: Run;
@@ -10,6 +11,7 @@ interface Props {
   onFrame?: (seconds: number) => void;
   onReady?: () => void;
   onProjection?: (points: Projection[]) => void;
+  onRailImages?: (images: RailImages) => void;
   onInterrupt?: () => void;
   onAvailability?: (available: boolean) => void;
 }
@@ -43,6 +45,7 @@ export function DioramaView(props: Props) {
             train: latest.current.train,
             preview: latest.current.preview,
             onProjection: (points) => latest.current.onProjection?.(points),
+            onRailImages: (images) => latest.current.onRailImages?.(images),
             onContextLost: () => {
               setError(true);
               latest.current.onAvailability?.(false);

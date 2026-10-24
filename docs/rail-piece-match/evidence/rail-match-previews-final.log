@@ -1,0 +1,11 @@
+
+> train-induction@0.1.0 test:e2e
+> playwright test --grep rail previews remain
+
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium-touch] › tests/e2e/rebuild-v2.spec.ts:59:1 › rail previews remain distinct and follow the board viewpoint on resize (19.2s)
+  ✓  2 [webkit-touch] › tests/e2e/rebuild-v2.spec.ts:59:1 › rail previews remain distinct and follow the board viewpoint on resize (4.7s)
+
+  2 passed (28.0s)
